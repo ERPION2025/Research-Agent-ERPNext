@@ -9,7 +9,7 @@
  "label": "Research Agent",
  "links": [
   {"hidden": 0, "is_query_report": 0, "label": "Ask", "link_count": 0, "onboard": 1, "type": "Card Break"},
-  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Open Research Agent", "link_count": 0, "link_to": "research-agent", "link_type": "Page", "onboard": 1, "type": "Link"},
+  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Open Research Agent", "link_count": 0, "link_to": "research-agent-workbench", "link_type": "Page", "onboard": 1, "type": "Link"},
   {"hidden": 0, "is_query_report": 0, "label": "Configuration", "link_count": 0, "onboard": 0, "type": "Card Break"},
   {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Research Agent Settings", "link_count": 0, "link_to": "Research Agent Settings", "link_type": "DocType", "onboard": 1, "type": "Link"},
   {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "MCP Server", "link_count": 0, "link_to": "MCP Server", "link_type": "DocType", "onboard": 0, "type": "Link"},

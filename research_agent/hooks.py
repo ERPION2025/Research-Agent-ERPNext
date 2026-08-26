@@ -19,7 +19,7 @@ add_to_apps_screen = [
         "name": "research_agent",
         "logo": "/assets/research_agent/images/logo.svg",
         "title": "Research Agent",
-        "route": "/app/research-agent",
+        "route": "/app/research-agent-workbench",
     }
 ]
 
