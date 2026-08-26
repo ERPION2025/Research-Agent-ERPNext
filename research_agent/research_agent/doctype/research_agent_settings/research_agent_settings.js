@@ -2,7 +2,7 @@
 
 frappe.ui.form.on("Research Agent Settings", {
 	refresh(frm) {
-		frm.add_custom_button(__("Open Research Agent"), () => frappe.set_route("research-agent"));
+		frm.add_custom_button(__("Open Research Agent"), () => frappe.set_route("research-agent-workbench"));
 		frm.add_custom_button(__("Show My Tools"), () => {
 			frappe.call("research_agent.api.list_tools").then((r) => {
 				const d = r.message;

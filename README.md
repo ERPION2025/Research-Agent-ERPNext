@@ -90,7 +90,7 @@ Then open **Research Agent Settings**:
 3. Tick **Enabled**.
 4. Optionally add DocTypes to the allowlist to narrow what the agent can see at all.
 
-Open the agent at `/app/research-agent`.
+Open the agent at `/app/research-agent-workbench`.
 
 The app installs disabled on purpose. It will not call an external API until someone with System Manager deliberately turns it on.
 

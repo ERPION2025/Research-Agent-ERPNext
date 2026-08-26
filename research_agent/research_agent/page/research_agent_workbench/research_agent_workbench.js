@@ -5,6 +5,11 @@
 // reflection as it happens, grouped by trial. The rail is the point of the
 // page. An analytics answer nobody can audit is worth nothing to a CFO, so
 // the work is shown by default rather than hidden behind a toggle.
+//
+// Named research-agent-workbench, not research-agent: the Workspace is
+// already named "Research Agent", and a Workspace and a Page with the same
+// route both resolve to /app/research-agent. The workspace always wins that
+// collision, so the ask box below was silently unreachable.
 
 // The final answer is markdown composed by the LLM from tool results, which
 // can include web page content (search results, extracted pages) and ERP
@@ -32,7 +37,7 @@ function sanitize_html(html) {
 	return doc.body.innerHTML;
 }
 
-frappe.pages["research-agent"].on_page_load = function (wrapper) {
+frappe.pages["research-agent-workbench"].on_page_load = function (wrapper) {
 	const page = frappe.ui.make_app_page({
 		parent: wrapper,
 		title: __("Research Agent"),
