@@ -1,0 +1,38 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "MCP Header",
+ "field_order": [
+  "header_key",
+  "header_value"
+ ],
+ "fields": [
+  {
+   "fieldname": "header_key",
+   "label": "Key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "header_value",
+   "label": "Value",
+   "fieldtype": "Password",
+   "description": "Encrypted at rest, the same as the Auth Token field above."
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}

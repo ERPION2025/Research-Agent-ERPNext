@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Competitor Observation",
+ "field_order": [
+  "competitor_name",
+  "model_or_product",
+  "observed_price",
+  "currency",
+  "observed_on",
+  "positioning",
+  "source_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "competitor_name",
+   "label": "Competitor",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 2,
+   "reqd": 1
+  },
+  {
+   "fieldname": "model_or_product",
+   "label": "Model or Product",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 3
+  },
+  {
+   "fieldname": "observed_price",
+   "label": "Observed Price",
+   "fieldtype": "Float",
+   "precision": "2",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "currency",
+   "label": "Currency",
+   "fieldtype": "Link",
+   "options": "Currency",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "observed_on",
+   "label": "Observed On",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "positioning",
+   "label": "Positioning",
+   "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "source_url",
+   "label": "Source URL",
+   "fieldtype": "Data",
+   "options": "URL",
+   "in_list_view": 1,
+   "columns": 3
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}

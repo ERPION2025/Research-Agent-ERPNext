@@ -1,0 +1,440 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Agent Settings",
+ "field_order": [
+  "sb_general",
+  "enabled",
+  "default_provider",
+  "cb_general",
+  "daily_session_limit",
+  "retain_sessions_days",
+  "sb_openai",
+  "openai_api_key",
+  "openai_planner_model",
+  "openai_worker_model",
+  "openai_reflector_model",
+  "cb_openai",
+  "test_openai",
+  "sb_anthropic",
+  "anthropic_api_key",
+  "anthropic_planner_model",
+  "anthropic_worker_model",
+  "anthropic_reflector_model",
+  "cb_anthropic",
+  "test_anthropic",
+  "sb_tavily",
+  "allow_web_search",
+  "tavily_api_key",
+  "tavily_search_depth",
+  "tavily_max_results",
+  "cb_tavily",
+  "preferred_domains",
+  "test_tavily",
+  "sb_loop",
+  "max_trials",
+  "max_tool_calls",
+  "pass_threshold",
+  "cb_loop",
+  "use_llm_judge",
+  "log_prompts",
+  "sb_data",
+  "max_rows_per_query",
+  "allow_raw_sql",
+  "cb_data",
+  "allowed_doctypes",
+  "sb_write",
+  "allow_write_actions",
+  "approver_role",
+  "writable_doctypes",
+  "write_blocklist",
+  "cb_write",
+  "enable_auto_approve",
+  "auto_approve_doctypes",
+  "allow_self_approval",
+  "action_expiry_hours",
+  "auto_approve_value_limit",
+  "sb_mcp",
+  "enable_mcp_client",
+  "cb_mcp",
+  "enable_mcp_server",
+  "sb_diag",
+  "show_versions",
+  "version_info"
+ ],
+ "fields": [
+  {
+   "fieldname": "sb_general",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "enabled",
+   "label": "Enable Research Agent",
+   "fieldtype": "Check",
+   "default": "1"
+  },
+  {
+   "fieldname": "default_provider",
+   "label": "Default LLM Provider",
+   "fieldtype": "Select",
+   "options": "OpenAI\nAnthropic",
+   "default": "OpenAI",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cb_general",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "daily_session_limit",
+   "label": "Daily Runs per User",
+   "fieldtype": "Int",
+   "default": "20",
+   "description": "0 means unlimited."
+  },
+  {
+   "fieldname": "retain_sessions_days",
+   "label": "Delete Sessions After (Days)",
+   "fieldtype": "Int",
+   "default": "90"
+  },
+  {
+   "fieldname": "sb_openai",
+   "fieldtype": "Section Break",
+   "label": "OpenAI"
+  },
+  {
+   "fieldname": "openai_api_key",
+   "label": "OpenAI API Key",
+   "fieldtype": "Password"
+  },
+  {
+   "fieldname": "openai_planner_model",
+   "label": "Planner Model",
+   "fieldtype": "Data",
+   "default": "o4-mini",
+   "description": "Reasoning model. Decides the plan."
+  },
+  {
+   "fieldname": "openai_worker_model",
+   "label": "Worker Model",
+   "fieldtype": "Data",
+   "default": "gpt-4.1-mini",
+   "description": "Fast model. Runs the tool loop and writes the draft."
+  },
+  {
+   "fieldname": "openai_reflector_model",
+   "label": "Reflector Model",
+   "fieldtype": "Data",
+   "default": "gpt-4.1",
+   "description": "Strongest model you have. Judges and reflects."
+  },
+  {
+   "fieldname": "cb_openai",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "test_openai",
+   "label": "Test OpenAI",
+   "fieldtype": "Button"
+  },
+  {
+   "fieldname": "sb_anthropic",
+   "fieldtype": "Section Break",
+   "label": "Anthropic"
+  },
+  {
+   "fieldname": "anthropic_api_key",
+   "label": "Anthropic API Key",
+   "fieldtype": "Password"
+  },
+  {
+   "fieldname": "anthropic_planner_model",
+   "label": "Planner Model",
+   "fieldtype": "Data",
+   "default": "claude-sonnet-5",
+   "description": "Decides the plan."
+  },
+  {
+   "fieldname": "anthropic_worker_model",
+   "label": "Worker Model",
+   "fieldtype": "Data",
+   "default": "claude-haiku-4-5-20251001",
+   "description": "Fast model. Runs the tool loop and writes the draft."
+  },
+  {
+   "fieldname": "anthropic_reflector_model",
+   "label": "Reflector Model",
+   "fieldtype": "Data",
+   "default": "claude-opus-5",
+   "description": "Strongest model you have. Judges and reflects."
+  },
+  {
+   "fieldname": "cb_anthropic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "test_anthropic",
+   "label": "Test Anthropic",
+   "fieldtype": "Button"
+  },
+  {
+   "fieldname": "sb_tavily",
+   "fieldtype": "Section Break",
+   "label": "Web Research (Tavily)"
+  },
+  {
+   "fieldname": "allow_web_search",
+   "label": "Allow Web Research",
+   "fieldtype": "Check",
+   "default": "1"
+  },
+  {
+   "fieldname": "tavily_api_key",
+   "label": "Tavily API Key",
+   "fieldtype": "Password",
+   "depends_on": "allow_web_search"
+  },
+  {
+   "fieldname": "tavily_search_depth",
+   "label": "Search Depth",
+   "fieldtype": "Select",
+   "options": "basic\nadvanced",
+   "default": "basic",
+   "depends_on": "allow_web_search"
+  },
+  {
+   "fieldname": "tavily_max_results",
+   "label": "Max Results per Search",
+   "fieldtype": "Int",
+   "default": "5",
+   "depends_on": "allow_web_search"
+  },
+  {
+   "fieldname": "cb_tavily",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "preferred_domains",
+   "label": "Preferred Domains",
+   "fieldtype": "Small Text",
+   "depends_on": "allow_web_search",
+   "description": "Comma separated, added to the built-in list. Used to score source quality."
+  },
+  {
+   "fieldname": "test_tavily",
+   "label": "Test Tavily",
+   "fieldtype": "Button",
+   "depends_on": "allow_web_search"
+  },
+  {
+   "fieldname": "sb_loop",
+   "fieldtype": "Section Break",
+   "label": "Reflexion Loop"
+  },
+  {
+   "fieldname": "max_trials",
+   "label": "Max Trials",
+   "fieldtype": "Int",
+   "default": "2",
+   "description": "How many times the agent may re-plan and retry after a failed evaluation."
+  },
+  {
+   "fieldname": "max_tool_calls",
+   "label": "Max Tool Calls per Trial",
+   "fieldtype": "Int",
+   "default": "18"
+  },
+  {
+   "fieldname": "pass_threshold",
+   "label": "Pass Threshold",
+   "fieldtype": "Float",
+   "default": "0.75",
+   "description": "Weighted evaluator score, 0 to 1, needed to stop early."
+  },
+  {
+   "fieldname": "cb_loop",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "use_llm_judge",
+   "label": "Use LLM Judge",
+   "fieldtype": "Check",
+   "default": "1",
+   "description": "Adds one model call per trial for completeness and usefulness scoring."
+  },
+  {
+   "fieldname": "log_prompts",
+   "label": "Log Full Prompts",
+   "fieldtype": "Check",
+   "default": "0",
+   "description": "Verbose. Turn on only while debugging."
+  },
+  {
+   "fieldname": "sb_data",
+   "fieldtype": "Section Break",
+   "label": "Data Access"
+  },
+  {
+   "fieldname": "max_rows_per_query",
+   "label": "Max Rows per Query",
+   "fieldtype": "Int",
+   "default": "500"
+  },
+  {
+   "fieldname": "allow_raw_sql",
+   "label": "Allow Read-Only SQL",
+   "fieldtype": "Check",
+   "default": "0",
+   "description": "Lets the agent write SELECT queries for joins. Every table is still doctype-permission-checked, but a hand-written query cannot have a User Permission restriction (Territory, Cost Center) verified against it, so any user with such a restriction is refused this tool outright."
+  },
+  {
+   "fieldname": "cb_data",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "allowed_doctypes",
+   "label": "DocType Allowlist",
+   "fieldtype": "Table MultiSelect",
+   "options": "Research Agent Allowed DocType",
+   "description": "Leave empty to allow every DocType the user already has read permission on. Add rows to narrow the agent to a specific surface."
+  },
+  {
+   "fieldname": "sb_write",
+   "fieldtype": "Section Break",
+   "label": "Write Actions"
+  },
+  {
+   "fieldname": "allow_write_actions",
+   "label": "Allow Write Actions",
+   "fieldtype": "Check",
+   "default": "0",
+   "description": "Lets the agent PROPOSE changes. It can never write directly. Every proposal becomes an Agent Action Request that a human approves."
+  },
+  {
+   "fieldname": "approver_role",
+   "label": "Approver Role",
+   "fieldtype": "Link",
+   "options": "Role",
+   "default": "System Manager",
+   "depends_on": "allow_write_actions"
+  },
+  {
+   "fieldname": "writable_doctypes",
+   "label": "Writable DocTypes",
+   "fieldtype": "Table MultiSelect",
+   "options": "Research Agent Writable DocType",
+   "depends_on": "allow_write_actions",
+   "description": "Leave empty to allow any DocType the user can already write. Recommended: name them explicitly."
+  },
+  {
+   "fieldname": "write_blocklist",
+   "label": "Write Blocklist",
+   "fieldtype": "Small Text",
+   "depends_on": "allow_write_actions",
+   "description": "Comma separated. Added to the built-in hard blocklist."
+  },
+  {
+   "fieldname": "cb_write",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "enable_auto_approve",
+   "label": "Enable Auto-Approve",
+   "fieldtype": "Check",
+   "default": "0",
+   "depends_on": "allow_write_actions",
+   "description": "Executes low-risk proposals without a human click. Submit, Cancel and Delete are never auto-approved."
+  },
+  {
+   "fieldname": "auto_approve_doctypes",
+   "label": "Auto-Approve DocTypes",
+   "fieldtype": "Table MultiSelect",
+   "options": "Research Agent Auto Approve DocType",
+   "depends_on": "enable_auto_approve"
+  },
+  {
+   "fieldname": "allow_self_approval",
+   "label": "Allow Self Approval",
+   "fieldtype": "Check",
+   "default": "0",
+   "depends_on": "allow_write_actions",
+   "description": "Off means the person who asked cannot approve their own action. Leave off unless you are a single-user site."
+  },
+  {
+   "fieldname": "action_expiry_hours",
+   "label": "Expire Pending Actions After (Hours)",
+   "fieldtype": "Int",
+   "default": "72",
+   "depends_on": "allow_write_actions"
+  },
+  {
+   "fieldname": "auto_approve_value_limit",
+   "label": "Auto-Approve Value Ceiling",
+   "fieldtype": "Currency",
+   "depends_on": "enable_auto_approve",
+   "description": "Proposals above this value always need a human. 0 means no ceiling, which is not recommended."
+  },
+  {
+   "fieldname": "sb_mcp",
+   "fieldtype": "Section Break",
+   "label": "MCP"
+  },
+  {
+   "fieldname": "enable_mcp_client",
+   "label": "Use External MCP Servers",
+   "fieldtype": "Check",
+   "default": "1",
+   "description": "Lets the agent call tools from servers registered under MCP Server."
+  },
+  {
+   "fieldname": "cb_mcp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "enable_mcp_server",
+   "label": "Expose ERPNext as an MCP Server",
+   "fieldtype": "Check",
+   "default": "0",
+   "description": "Serves this app's ERPNext tools at /api/method/research_agent.agent.mcp.server.handle so Claude Desktop and other MCP clients can query the ERP. Authenticate with a Frappe API key."
+  },
+  {
+   "fieldname": "sb_diag",
+   "fieldtype": "Section Break",
+   "label": "Diagnostics"
+  },
+  {
+   "fieldname": "show_versions",
+   "label": "Check Compatibility",
+   "fieldtype": "Button"
+  },
+  {
+   "fieldname": "version_info",
+   "label": "Detected Versions",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ],
+ "issingle": 1
+}
