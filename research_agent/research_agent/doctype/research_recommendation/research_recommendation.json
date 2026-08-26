@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Recommendation",
+ "field_order": [
+  "recommendation",
+  "priority",
+  "owner_role",
+  "expected_impact"
+ ],
+ "fields": [
+  {
+   "fieldname": "recommendation",
+   "label": "Recommendation",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "columns": 5,
+   "reqd": 1
+  },
+  {
+   "fieldname": "priority",
+   "label": "Priority",
+   "fieldtype": "Select",
+   "options": "High\nMedium\nLow",
+   "default": "Medium",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "owner_role",
+   "label": "Owner Function",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "expected_impact",
+   "label": "Expected Impact",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "columns": 3
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}

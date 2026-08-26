@@ -1,0 +1,111 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Agent Tool",
+ "field_order": [
+  "tool_name",
+  "enabled",
+  "tool_type",
+  "cb_tool",
+  "category",
+  "mcp_server",
+  "is_builtin",
+  "sb_tool_detail",
+  "description",
+  "allowed_roles"
+ ],
+ "fields": [
+  {
+   "fieldname": "tool_name",
+   "label": "Tool Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "enabled",
+   "label": "Enabled",
+   "fieldtype": "Check",
+   "default": "1",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tool_type",
+   "label": "Type",
+   "fieldtype": "Select",
+   "options": "Builtin\nMCP",
+   "default": "Builtin",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_tool",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "category",
+   "label": "Category",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "mcp_server",
+   "label": "MCP Server",
+   "fieldtype": "Link",
+   "options": "MCP Server",
+   "read_only": 1,
+   "depends_on": "eval:doc.tool_type=='MCP'"
+  },
+  {
+   "fieldname": "is_builtin",
+   "label": "Is Builtin",
+   "fieldtype": "Check",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "sb_tool_detail",
+   "fieldtype": "Section Break",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "allowed_roles",
+   "label": "Restrict to Roles",
+   "fieldtype": "Small Text",
+   "description": "Comma separated role names. Leave empty to allow every user who already has permission on the underlying data."
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "autoname": "field:tool_name"
+}

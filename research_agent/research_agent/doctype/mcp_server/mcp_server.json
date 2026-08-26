@@ -1,0 +1,162 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "MCP Server",
+ "field_order": [
+  "server_name",
+  "enabled",
+  "cb_mcp_head",
+  "tool_count",
+  "last_synced",
+  "sb_conn",
+  "url",
+  "timeout",
+  "cb_conn",
+  "auth_scheme",
+  "auth_token",
+  "sb_headers",
+  "custom_headers",
+  "sb_tools",
+  "tool_prefix",
+  "refresh_tools",
+  "cached_tools",
+  "server_info",
+  "last_error"
+ ],
+ "fields": [
+  {
+   "fieldname": "server_name",
+   "label": "Server Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "enabled",
+   "label": "Enabled",
+   "fieldtype": "Check",
+   "default": "1",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "cb_mcp_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tool_count",
+   "label": "Tools",
+   "fieldtype": "Int",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "last_synced",
+   "label": "Last Synced",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_conn",
+   "fieldtype": "Section Break",
+   "label": "Connection"
+  },
+  {
+   "fieldname": "url",
+   "label": "Server URL",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "description": "Streamable HTTP endpoint. For stdio servers, front them with mcp-proxy."
+  },
+  {
+   "fieldname": "timeout",
+   "label": "Timeout (s)",
+   "fieldtype": "Int",
+   "default": "60"
+  },
+  {
+   "fieldname": "cb_conn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "auth_scheme",
+   "label": "Auth Scheme",
+   "fieldtype": "Select",
+   "options": "Bearer\ntoken\nBasic\n",
+   "default": "Bearer"
+  },
+  {
+   "fieldname": "auth_token",
+   "label": "Auth Token",
+   "fieldtype": "Password"
+  },
+  {
+   "fieldname": "sb_headers",
+   "fieldtype": "Section Break",
+   "label": "Custom Headers"
+  },
+  {
+   "fieldname": "custom_headers",
+   "label": "Custom Headers",
+   "fieldtype": "Table",
+   "options": "MCP Header"
+  },
+  {
+   "fieldname": "sb_tools",
+   "fieldtype": "Section Break",
+   "label": "Discovered Tools"
+  },
+  {
+   "fieldname": "tool_prefix",
+   "label": "Tool Prefix",
+   "fieldtype": "Data",
+   "description": "Namespaces this server's tools, e.g. prefix 'wh' gives 'wh__query'. Defaults to a scrubbed server name."
+  },
+  {
+   "fieldname": "refresh_tools",
+   "label": "Refresh Tools",
+   "fieldtype": "Button"
+  },
+  {
+   "fieldname": "cached_tools",
+   "label": "Cached Tools",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "server_info",
+   "label": "Server Info",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_error",
+   "label": "Last Error",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "autoname": "field:server_name"
+}

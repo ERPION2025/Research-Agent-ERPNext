@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Artifact",
+ "field_order": [
+  "artifact_id",
+  "artifact_type",
+  "title",
+  "spec"
+ ],
+ "fields": [
+  {
+   "fieldname": "artifact_id",
+   "label": "ID",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "artifact_type",
+   "label": "Type",
+   "fieldtype": "Select",
+   "options": "chart\ntable\nmetric\ndashboard",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "title",
+   "label": "Title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 5
+  },
+  {
+   "fieldname": "spec",
+   "label": "Spec",
+   "fieldtype": "Code",
+   "options": "JSON"
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}

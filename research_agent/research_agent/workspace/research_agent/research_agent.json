@@ -1,0 +1,33 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"ra-hd\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Research Agent</span>\",\"col\":12}},{\"id\":\"ra-sc\",\"type\":\"card\",\"data\":{\"card_name\":\"Ask\",\"col\":4}},{\"id\":\"ra-cf\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"ra-hist\",\"type\":\"card\",\"data\":{\"card_name\":\"History\",\"col\":4}}]",
+ "creation": "2026-01-01 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "icon": "search",
+ "idx": 0,
+ "label": "Research Agent",
+ "links": [
+  {"hidden": 0, "is_query_report": 0, "label": "Ask", "link_count": 0, "onboard": 1, "type": "Card Break"},
+  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Open Research Agent", "link_count": 0, "link_to": "research-agent", "link_type": "Page", "onboard": 1, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Configuration", "link_count": 0, "onboard": 0, "type": "Card Break"},
+  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Research Agent Settings", "link_count": 0, "link_to": "Research Agent Settings", "link_type": "DocType", "onboard": 1, "type": "Link"},
+  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "MCP Server", "link_count": 0, "link_to": "MCP Server", "link_type": "DocType", "onboard": 0, "type": "Link"},
+  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Agent Tool", "link_count": 0, "link_to": "Agent Tool", "link_type": "DocType", "onboard": 0, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "History", "link_count": 0, "onboard": 0, "type": "Card Break"},
+  {"dependencies": "", "hidden": 0, "is_query_report": 0, "label": "Research Session", "link_count": 0, "link_to": "Research Session", "link_type": "DocType", "onboard": 0, "type": "Link"}
+ ],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "name": "Research Agent",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 90.0,
+ "shortcuts": [],
+ "title": "Research Agent"
+}

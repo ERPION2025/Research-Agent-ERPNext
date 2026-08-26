@@ -1,0 +1,321 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Market Research Report",
+ "field_order": [
+  "naming_series",
+  "subject",
+  "research_type",
+  "cb_mrr_head",
+  "company",
+  "research_date",
+  "period_from",
+  "period_to",
+  "amended_from",
+  "sb_mrr_scope",
+  "item_code",
+  "item_group",
+  "brand",
+  "cb_mrr_scope",
+  "territory",
+  "customer_group",
+  "supplier_group",
+  "sb_mrr_summary",
+  "executive_summary",
+  "sb_mrr_findings",
+  "key_findings",
+  "sb_mrr_comp",
+  "competitor_observations",
+  "sb_mrr_reco",
+  "recommendations",
+  "sb_mrr_sources",
+  "sources",
+  "sb_mrr_quality",
+  "confidence_score",
+  "source_quality_score",
+  "cb_mrr_quality",
+  "research_session",
+  "originating_prompt",
+  "reviewed_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "label": "Series",
+   "fieldtype": "Select",
+   "options": "MRR-.YYYY.-",
+   "default": "MRR-.YYYY.-",
+   "reqd": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "subject",
+   "label": "Subject",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "One specific line. Not 'Market research'."
+  },
+  {
+   "fieldname": "research_type",
+   "label": "Research Type",
+   "fieldtype": "Select",
+   "options": "Market Sizing\nCompetitor\nPricing\nRegulatory\nCustomer\nSupplier\nTechnology\nDemand\nOther",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_mrr_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company"
+  },
+  {
+   "fieldname": "research_date",
+   "label": "Research Date",
+   "fieldtype": "Date",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "period_from",
+   "label": "Period From",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "period_to",
+   "label": "Period To",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "amended_from",
+   "label": "Amended From",
+   "fieldtype": "Link",
+   "options": "Market Research Report",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "sb_mrr_scope",
+   "fieldtype": "Section Break",
+   "label": "Scope"
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item",
+   "in_standard_filter": 1,
+   "description": "Set when the research is about one specific model."
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "brand",
+   "label": "Brand",
+   "fieldtype": "Link",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "cb_mrr_scope",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "territory",
+   "label": "Territory",
+   "fieldtype": "Link",
+   "options": "Territory"
+  },
+  {
+   "fieldname": "customer_group",
+   "label": "Customer Group",
+   "fieldtype": "Link",
+   "options": "Customer Group"
+  },
+  {
+   "fieldname": "supplier_group",
+   "label": "Supplier Group",
+   "fieldtype": "Link",
+   "options": "Supplier Group"
+  },
+  {
+   "fieldname": "sb_mrr_summary",
+   "fieldtype": "Section Break",
+   "label": "Executive Summary"
+  },
+  {
+   "fieldname": "executive_summary",
+   "label": "Executive Summary",
+   "fieldtype": "Markdown Editor"
+  },
+  {
+   "fieldname": "sb_mrr_findings",
+   "fieldtype": "Section Break",
+   "label": "Key Findings"
+  },
+  {
+   "fieldname": "key_findings",
+   "label": "Key Findings",
+   "fieldtype": "Table",
+   "options": "Research Finding"
+  },
+  {
+   "fieldname": "sb_mrr_comp",
+   "fieldtype": "Section Break",
+   "label": "Competitor Observations"
+  },
+  {
+   "fieldname": "competitor_observations",
+   "label": "Competitor Observations",
+   "fieldtype": "Table",
+   "options": "Competitor Observation"
+  },
+  {
+   "fieldname": "sb_mrr_reco",
+   "fieldtype": "Section Break",
+   "label": "Recommendations"
+  },
+  {
+   "fieldname": "recommendations",
+   "label": "Recommendations",
+   "fieldtype": "Table",
+   "options": "Research Recommendation"
+  },
+  {
+   "fieldname": "sb_mrr_sources",
+   "fieldtype": "Section Break",
+   "label": "Sources"
+  },
+  {
+   "fieldname": "sources",
+   "label": "Sources",
+   "fieldtype": "Table",
+   "options": "Research Source"
+  },
+  {
+   "fieldname": "sb_mrr_quality",
+   "fieldtype": "Section Break",
+   "label": "Quality"
+  },
+  {
+   "fieldname": "confidence_score",
+   "label": "Confidence Score",
+   "fieldtype": "Float",
+   "precision": "3",
+   "read_only": 1,
+   "description": "Mean confidence across findings."
+  },
+  {
+   "fieldname": "source_quality_score",
+   "label": "Source Quality Score",
+   "fieldtype": "Float",
+   "precision": "3",
+   "read_only": 1,
+   "description": "Share of sources from preferred domains."
+  },
+  {
+   "fieldname": "cb_mrr_quality",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "research_session",
+   "label": "Research Session",
+   "fieldtype": "Link",
+   "options": "Research Session",
+   "read_only": 1
+  },
+  {
+   "fieldname": "originating_prompt",
+   "label": "Originating Prompt",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reviewed_by",
+   "label": "Reviewed By",
+   "fieldtype": "Link",
+   "options": "User"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1
+  },
+  {
+   "role": "Sales Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Item Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "report": 1
+  }
+ ],
+ "autoname": "naming_series:",
+ "title_field": "subject",
+ "track_changes": 1,
+ "is_submittable": 1
+}

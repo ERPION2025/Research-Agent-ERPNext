@@ -1,0 +1,219 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Session",
+ "field_order": [
+  "title",
+  "status",
+  "cb_head",
+  "eval_score",
+  "current_trial",
+  "trials_used",
+  "sb_prompt",
+  "prompt",
+  "sb_answer",
+  "final_answer",
+  "sb_artifacts",
+  "artifacts",
+  "sb_trace",
+  "steps",
+  "reflections",
+  "eval_detail",
+  "sb_outputs",
+  "research_report",
+  "actions_raised",
+  "sb_meta",
+  "input_tokens",
+  "output_tokens",
+  "cb_meta",
+  "duration_seconds",
+  "error_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "label": "Title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "Queued\nPlanning\nResearching\nDrafting\nEvaluating\nReflecting\nCompleted\nFailed\nCancelled",
+   "default": "Queued",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eval_score",
+   "label": "Evaluation Score",
+   "fieldtype": "Float",
+   "precision": "3",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "current_trial",
+   "label": "Current Trial",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "trials_used",
+   "label": "Trials Used",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_prompt",
+   "fieldtype": "Section Break",
+   "label": "Question"
+  },
+  {
+   "fieldname": "prompt",
+   "label": "Prompt",
+   "fieldtype": "Small Text",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sb_answer",
+   "fieldtype": "Section Break",
+   "label": "Answer"
+  },
+  {
+   "fieldname": "final_answer",
+   "label": "Final Answer",
+   "fieldtype": "Markdown Editor",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_artifacts",
+   "fieldtype": "Section Break",
+   "label": "Artifacts"
+  },
+  {
+   "fieldname": "artifacts",
+   "label": "Artifacts",
+   "fieldtype": "Table",
+   "options": "Research Artifact",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_trace",
+   "fieldtype": "Section Break",
+   "label": "Trace"
+  },
+  {
+   "fieldname": "steps",
+   "label": "Steps",
+   "fieldtype": "Table",
+   "options": "Research Step",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reflections",
+   "label": "Reflections",
+   "fieldtype": "Long Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "eval_detail",
+   "label": "Evaluation Detail",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_outputs",
+   "fieldtype": "Section Break",
+   "label": "Published Outputs"
+  },
+  {
+   "fieldname": "research_report",
+   "label": "Market Research Report",
+   "fieldtype": "Link",
+   "options": "Market Research Report",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actions_raised",
+   "label": "Action Requests Raised",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_meta",
+   "fieldtype": "Section Break",
+   "label": "Run Metadata"
+  },
+  {
+   "fieldname": "input_tokens",
+   "label": "Input Tokens",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output_tokens",
+   "label": "Output Tokens",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_meta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration_seconds",
+   "label": "Duration (s)",
+   "fieldtype": "Float",
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_log",
+   "label": "Error Log",
+   "fieldtype": "Code",
+   "read_only": 1,
+   "depends_on": "eval:doc.status=='Failed'"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "All",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "if_owner": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "autoname": "format:RS-{YYYY}-{#####}",
+ "title_field": "title",
+ "track_changes": 0
+}

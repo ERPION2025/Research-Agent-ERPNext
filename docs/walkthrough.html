@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Agent for ERPNext — process and screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------ *
+   Frappe desk design tokens, matched to v15/v16 so these mockups read
+   as the real product rather than a designer's idea of it.
+ * ------------------------------------------------------------------ */
+:root{
+  --bg:#F4F5F6; --card:#FFFFFF; --sidebar:#F7F7F7;
+  --ink:#1F272E; --text:#383838; --muted:#8D99A6; --faint:#B0B7BE;
+  --line:#EBEEF0; --line-2:#E2E6E9;
+  --blue:#2490EF; --blue-bg:#F0F8FF; --blue-dk:#1F6FBF;
+  --green:#1FA65A; --green-bg:#E9F7EF;
+  --orange:#E8880A; --orange-bg:#FDF3E4;
+  --red:#E24C4C; --red-bg:#FDEDED;
+  --purple:#7C3AED; --purple-bg:#F4EEFE;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:8px; --r-sm:6px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:#FBFBFC; color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px; line-height:1.6;
+}
+
+/* ---------------------------------------------------------- page shell */
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+.masthead{padding:56px 0 32px;border-bottom:1px solid var(--line-2)}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:10px 0 12px;color:var(--ink);font-weight:700;letter-spacing:-.02em}
+.masthead p{margin:0;max-width:68ch;color:var(--muted);font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.meta span{font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;background:var(--bg);color:var(--text);border:1px solid var(--line-2)}
+
+section{padding-top:56px}
+h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 6px}
+.lead{font-size:22px;color:var(--ink);font-weight:600;margin:0 0 10px;letter-spacing:-.01em}
+.note{max-width:72ch;color:var(--muted);margin:0 0 24px}
+.note b{color:var(--text);font-weight:600}
+
+/* ---------------------------------------------------------- diagrams */
+.diagram{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);padding:8px;overflow-x:auto}
+.diagram svg{display:block;min-width:900px;width:100%;height:auto}
+
+/* ---------------------------------------------------------- mockups */
+.screen{margin-bottom:14px}
+.screen-cap{display:flex;gap:10px;align-items:baseline;margin:36px 0 12px}
+.screen-num{font-family:var(--mono);font-size:12px;color:var(--blue);font-weight:500;flex:none;padding-top:3px}
+.screen-cap h3{margin:0;font-size:17px;color:var(--ink);font-weight:600}
+.screen-cap p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+
+.viewport{border:1px solid var(--line-2);border-radius:10px;overflow:hidden;background:var(--bg);box-shadow:0 1px 3px rgba(31,39,46,.06),0 8px 24px rgba(31,39,46,.05)}
+.chrome{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#EDEEF0;border-bottom:1px solid var(--line-2)}
+.dot{width:10px;height:10px;border-radius:50%;background:#CFD3D7}
+.url{margin-left:8px;font-family:var(--mono);font-size:11px;color:#7A828A;background:#fff;border-radius:20px;padding:3px 12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.desk{display:flex;min-height:200px}
+.deskbar{flex:none;width:172px;background:var(--sidebar);border-right:1px solid var(--line);padding:12px 8px;font-size:12.5px}
+.deskbar .grp{color:var(--faint);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:10px 8px 4px}
+.deskbar a{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--r-sm);color:var(--text);text-decoration:none}
+.deskbar a.on{background:#E7EAEC;font-weight:600;color:var(--ink)}
+.sq{width:14px;height:14px;border-radius:4px;background:#D6DADE;flex:none}
+.sq.b{background:var(--blue)}
+
+.deskmain{flex:1;min-width:0;padding:16px 20px 22px}
+.crumb{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.crumb h4{margin:0;font-size:19px;color:var(--ink);font-weight:600;letter-spacing:-.01em}
+.crumb .sub{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.btns{display:flex;gap:8px;flex:none}
+.btn{font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:var(--r-sm);border:1px solid var(--line-2);background:#fff;color:var(--text);white-space:nowrap}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.g{background:var(--green);border-color:var(--green);color:#fff}
+.btn.d{background:#fff;border-color:#F3C4C4;color:var(--red)}
+
+/* ask box */
+.ask{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);padding:13px 15px;margin-bottom:16px}
+.ask .q{font-size:15px;color:var(--ink)}
+.ask .ph{color:var(--faint)}
+.ask .foot{display:flex;justify-content:space-between;align-items:center;margin-top:11px}
+.ask .hint{font-size:11.5px;color:var(--faint)}
+
+/* two-pane */
+.panes{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:16px;align-items:start}
+
+.card{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.card-t{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:9px}
+.answer{font-size:13.5px;line-height:1.65}
+.answer p{margin:0 0 9px}
+.answer p:last-child{margin-bottom:0}
+.answer strong{color:var(--ink);font-weight:600}
+.answer .src{color:var(--muted);font-size:12.5px}
+
+/* metric cards */
+.mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.metric .v{font-size:25px;font-weight:700;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.metric .d{font-size:11.5px;margin-top:3px;font-weight:500}
+.metric .d.bad{color:var(--red)} .metric .d.good{color:var(--green)} .metric .d.n{color:var(--muted)}
+.metric .d span{color:var(--muted);font-weight:400}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:0 8px 7px;border-bottom:1px solid var(--line-2)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);color:var(--text)}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pos{color:var(--red);font-weight:600} .neg{color:var(--green);font-weight:600}
+.mono{font-family:var(--mono);font-size:11.5px}
+
+/* trace rail */
+.rail{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);overflow:hidden}
+.rail-h{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:1px solid var(--line);font-size:12.5px}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--blue);flex:none;animation:p 1.2s ease-in-out infinite}
+.pulse.done{background:var(--green);animation:none}
+@keyframes p{50%{opacity:.22}}
+@media(prefers-reduced-motion:reduce){.pulse{animation:none}}
+.pill{margin-left:auto;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.pill.g{background:var(--green-bg);color:var(--green)} .pill.r{background:var(--red-bg);color:var(--red)}
+.rail-b{padding:9px 11px}
+.tlab{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:10px 0 5px}
+.tlab:first-child{margin-top:0}
+.tlab em{font-style:normal;color:var(--orange);text-transform:none;letter-spacing:0;font-weight:500}
+.step{border-left:2px solid var(--line-2);padding:3px 0 3px 9px;margin-bottom:1px;font-size:12px;display:flex;gap:6px;align-items:center}
+.step.tool{border-left-color:var(--blue)}
+.step.ref{border-left-color:var(--orange)}
+.step.ev{border-left-color:var(--purple)}
+.step.fail{border-left-color:var(--red)}
+.step .nm{font-family:var(--mono);font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step .ms{margin-left:auto;color:var(--faint);font-size:10.5px;font-variant-numeric:tabular-nums;flex:none}
+.step .ic{color:var(--faint);font-size:10px;flex:none}
+.expand{background:var(--bg);border-radius:var(--r-sm);padding:7px 9px;margin:3px 0 6px 11px;font-family:var(--mono);font-size:10.5px;line-height:1.55;color:#5A6570;white-space:pre-wrap}
+
+/* form layout */
+.fsec{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.fsec:first-child{margin-top:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.f label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:3px}
+.f .val{font-size:13px;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:4px}
+.f .val.link{color:var(--blue)}
+.f.wide{grid-column:1/-1}
+.banner{display:flex;gap:9px;align-items:flex-start;padding:10px 13px;border-radius:var(--r-sm);font-size:12.5px;margin-bottom:14px;line-height:1.5}
+.banner.o{background:var(--orange-bg);color:#8A5200;border:1px solid #F5DEB6}
+.banner.g{background:var(--green-bg);color:#12603A;border:1px solid #C4E8D4}
+.banner.r{background:var(--red-bg);color:#96302F;border:1px solid #F3C4C4}
+.banner b{font-weight:600}
+.tag{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.tag.o{background:var(--orange-bg);color:var(--orange)} .tag.g{background:var(--green-bg);color:var(--green)}
+.tag.r{background:var(--red-bg);color:var(--red)} .tag.b{background:var(--blue-bg);color:var(--blue-dk)}
+.tag.n{background:var(--bg);color:var(--muted)}
+
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:5px 0}
+.box{width:14px;height:14px;border-radius:3px;border:1px solid var(--faint);flex:none;margin-top:3px}
+.box.on{background:var(--blue);border-color:var(--blue);position:relative}
+.box.on::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.chk .hlp{color:var(--muted);font-size:11.5px;display:block;margin-top:1px}
+
+.callout{border-left:3px solid var(--blue);background:var(--blue-bg);padding:11px 14px;border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:13.5px;margin:16px 0;color:var(--text)}
+.callout b{color:var(--ink)}
+
+/* shrink the desktop mockups on small screens instead of forcing a swipe */
+@media(max-width:1080px){ .viewport{zoom:.82} }
+@media(max-width:900px){ .viewport{zoom:.66} }
+@media(max-width:720px){ .viewport{zoom:.48} }
+@media(max-width:520px){ .viewport{zoom:.34} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow">Research Agent · ERPNext marketplace app</div>
+  <h1>How it works, and what it looks like</h1>
+  <p>End-to-end process flow, then five screens showing the module in normal daily use: a question running, an answer with its working shown, an approval, a published research report, and the configuration behind it.</p>
+  <div class="meta">
+    <span>Frappe / ERPNext v15 &amp; v16</span>
+    <span>26 tools</span>
+    <span>Reflexion loop</span>
+    <span>Read + propose</span>
+    <span>MCP both directions</span>
+  </div>
+</header>
+
+<!-- ================================================================= -->
+<section>
+  <h2>01 · Process</h2>
+  <div class="lead">One question, end to end</div>
+  <p class="note">Three ways in, one loop, three ways out. The loop is the part that matters: it does not stop at the first draft, it scores its own work and re-runs when the score fails. Nothing reaches the ERP without a human in between.</p>
+
+  <div class="diagram">
+  <svg viewBox="0 0 1120 700" role="img" aria-label="Process flow from trigger through the reflexion loop to three outputs">
+    <defs>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9 z" fill="#8D99A6"/>
+      </marker>
+      <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9 z" fill="#2490EF"/>
+      </marker>
+      <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9 z" fill="#E8880A"/>
+      </marker>
+      <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,1 L9,5 L0,9 z" fill="#1FA65A"/>
+      </marker>
+      <style>
+        .bx{fill:#fff;stroke:#E2E6E9}
+        .ti{font:600 13px Inter,sans-serif;fill:#1F272E}
+        .sm{font:11px Inter,sans-serif;fill:#8D99A6}
+        .mn{font:500 10.5px 'JetBrains Mono',monospace;fill:#5A6570}
+        .lb{font:600 10px Inter,sans-serif;fill:#8D99A6;letter-spacing:.09em}
+        .cn{stroke:#C8CFD5;stroke-width:1.5;fill:none}
+      </style>
+    </defs>
+
+    <!-- ROW 1 : triggers -->
+    <text x="40" y="34" class="lb">TRIGGER</text>
+    <g>
+      <rect class="bx" x="40" y="46" width="290" height="52" rx="8"/>
+      <text x="58" y="70" class="ti">Desk page</text>
+      <text x="58" y="87" class="sm">A person types a question</text>
+
+      <rect class="bx" x="352" y="46" width="290" height="52" rx="8"/>
+      <text x="370" y="70" class="ti">MCP client</text>
+      <text x="370" y="87" class="sm">Claude Desktop / Cowork, via API key</text>
+
+      <rect class="bx" x="664" y="46" width="290" height="52" rx="8"/>
+      <text x="682" y="70" class="ti">Scheduled brief</text>
+      <text x="682" y="87" class="sm">Daily pulse to a workspace</text>
+    </g>
+
+    <!-- converge -->
+    <path class="cn" d="M185,98 L185,118 L497,118" marker-end="url(#a)"/>
+    <path class="cn" d="M497,98 L497,126"/>
+    <path class="cn" d="M809,98 L809,118 L497,118"/>
+    <path class="cn" d="M497,118 L497,140" marker-end="url(#a)"/>
+
+    <!-- ROW 2 : session -->
+    <rect class="bx" x="352" y="140" width="290" height="46" rx="8" fill="#F0F8FF" stroke="#BFDFFA"/>
+    <text x="497" y="163" class="ti" text-anchor="middle">Research Session created</text>
+    <text x="497" y="178" class="sm" text-anchor="middle">queued to the long worker · owned by the asker</text>
+    <path class="cn" d="M497,186 L497,214" marker-end="url(#a)"/>
+
+    <!-- ROW 3 : the loop -->
+    <rect x="40" y="214" width="1040" height="322" rx="10" fill="#FBFBFC" stroke="#E2E6E9" stroke-dasharray="4 4"/>
+    <text x="62" y="238" class="lb">REFLEXION LOOP · UP TO 2 TRIALS</text>
+
+    <!-- stages -->
+    <g>
+      <rect class="bx" x="118" y="252" width="272" height="42" rx="7"/>
+      <text x="136" y="271" class="ti">1 · Plan</text>
+      <text x="136" y="286" class="sm">planner model, no tools, six lines</text>
+
+      <rect class="bx" x="118" y="310" width="272" height="42" rx="7"/>
+      <text x="136" y="329" class="ti">2 · Act</text>
+      <text x="136" y="344" class="sm">worker model calls tools, up to 18</text>
+
+      <rect class="bx" x="118" y="368" width="272" height="42" rx="7"/>
+      <text x="136" y="387" class="ti">3 · Compose</text>
+      <text x="136" y="402" class="sm">draft written from the transcript only</text>
+
+      <rect class="bx" x="118" y="426" width="272" height="60" rx="7" fill="#F4EEFE" stroke="#DCC9FB"/>
+      <text x="136" y="445" class="ti">4 · Evaluate</text>
+      <text x="136" y="460" class="sm">grounding · erp · artifacts · sources</text>
+      <text x="136" y="475" class="sm">+ llm judge → weighted score</text>
+    </g>
+    <path class="cn" d="M254,294 L254,304" marker-end="url(#a)"/>
+    <path class="cn" d="M254,352 L254,362" marker-end="url(#a)"/>
+    <path class="cn" d="M254,410 L254,420" marker-end="url(#a)"/>
+
+    <!-- reflect loop back -->
+    <path d="M118,456 L82,456 L82,273 L112,273" fill="none" stroke="#E8880A" stroke-width="1.5" marker-end="url(#ao)"/>
+    <text x="76" y="368" class="lb" fill="#E8880A" transform="rotate(-90 76 368)" text-anchor="middle">FAIL · REFLECT</text>
+
+    <!-- tool palette -->
+    <line x1="418" y1="252" x2="418" y2="500" stroke="#E2E6E9" stroke-dasharray="3 3"/>
+    <text x="446" y="262" class="lb">TOOLS AVAILABLE DURING ACT</text>
+
+    <g>
+      <rect x="446" y="274" width="300" height="66" rx="7" fill="#F0F8FF" stroke="#BFDFFA"/>
+      <text x="462" y="292" class="ti" font-size="12">ERPNext operations</text>
+      <text x="462" y="308" class="mn">erp_sales_today · erp_collections_today</text>
+      <text x="462" y="323" class="mn">erp_production_today · erp_item_cost</text>
+      <text x="462" y="336" class="mn">erp_daily_pulse</text>
+
+      <rect x="762" y="274" width="300" height="66" rx="7" fill="#F0F8FF" stroke="#BFDFFA"/>
+      <text x="778" y="292" class="ti" font-size="12">ERPNext data</text>
+      <text x="778" y="308" class="mn">erp_list_doctypes · erp_describe_doctype</text>
+      <text x="778" y="323" class="mn">erp_fetch_records · erp_run_report</text>
+      <text x="778" y="336" class="mn">erp_read_query · erp_company_context</text>
+
+      <rect x="446" y="352" width="300" height="52" rx="7" fill="#fff" stroke="#E2E6E9"/>
+      <text x="462" y="370" class="ti" font-size="12">Research &amp; analysis</text>
+      <text x="462" y="386" class="mn">web_search · web_fetch · analyse_data</text>
+      <text x="462" y="399" class="mn">find_research_reports</text>
+
+      <rect x="762" y="352" width="300" height="52" rx="7" fill="#fff" stroke="#E2E6E9"/>
+      <text x="778" y="370" class="ti" font-size="12">Visualisation</text>
+      <text x="778" y="386" class="mn">create_chart · create_table</text>
+      <text x="778" y="399" class="mn">create_metric · assemble_dashboard</text>
+
+      <rect x="446" y="416" width="300" height="52" rx="7" fill="#FDF3E4" stroke="#F5DEB6"/>
+      <text x="462" y="434" class="ti" font-size="12">Write proposals</text>
+      <text x="462" y="450" class="mn">erp_propose_create · _update</text>
+      <text x="462" y="463" class="mn">erp_propose_submit · _cancel</text>
+
+      <rect x="762" y="416" width="300" height="52" rx="7" fill="#fff" stroke="#E2E6E9"/>
+      <text x="778" y="434" class="ti" font-size="12">External MCP servers</text>
+      <text x="778" y="450" class="mn">warehouse__query · slack__search</text>
+      <text x="778" y="463" class="sm">discovered and cached hourly</text>
+    </g>
+    <text x="446" y="492" class="sm">Every call runs as the asking user. Permissions are checked per tool, never bypassed.</text>
+
+    <path class="cn" d="M254,486 L254,512 L497,512" />
+    <path class="cn" d="M497,512 L497,548" marker-end="url(#ag)" stroke="#1FA65A"/>
+    <text x="512" y="530" class="lb" fill="#1FA65A">PASS · PUBLISH BEST DRAFT</text>
+
+    <!-- ROW 4 : outputs -->
+    <text x="40" y="576" class="lb">OUTPUT</text>
+    <g>
+      <rect class="bx" x="40" y="588" width="290" height="86" rx="8" fill="#E9F7EF" stroke="#C4E8D4"/>
+      <text x="58" y="611" class="ti">Answer + artifacts</text>
+      <text x="58" y="629" class="sm">Metrics, charts, tables, dashboard</text>
+      <text x="58" y="645" class="sm">Charts pin to a Workspace as a</text>
+      <text x="58" y="660" class="sm">real Dashboard Chart</text>
+
+      <rect class="bx" x="352" y="588" width="290" height="86" rx="8"/>
+      <text x="370" y="611" class="ti">Market Research Report</text>
+      <text x="370" y="629" class="sm">Submittable · MRR-2026-00007</text>
+      <text x="370" y="645" class="sm">Linked to Item, Brand, Territory</text>
+      <text x="370" y="660" class="sm">Draft → human submits</text>
+
+      <rect class="bx" x="664" y="588" width="290" height="86" rx="8" fill="#FDF3E4" stroke="#F5DEB6"/>
+      <text x="682" y="611" class="ti">Agent Action Request</text>
+      <text x="682" y="629" class="sm">Pending Approval · AAR-2026-00031</text>
+      <text x="682" y="645" class="sm">Human approves → executes as the</text>
+      <text x="682" y="660" class="sm">requester → ERP document created</text>
+    </g>
+  </svg>
+  </div>
+
+  <div class="callout">
+    <b>The loop-back on the left is the whole point.</b> Most agents draft, critique and rewrite the prose. This one re-plans and re-queries. If trial one asked the wrong table, no amount of rewriting fixes it. Screen 02 shows exactly that happening.
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<section>
+  <h2>02 · Screens</h2>
+  <div class="lead">Five moments in a normal day</div>
+  <p class="note">These are the real desk layouts: Frappe navbar, sidebar and form conventions, because a marketplace app that looks foreign inside the desk reads as untrustworthy.</p>
+
+  <!-- SCREEN 1 ------------------------------------------------------- -->
+  <div class="screen-cap">
+    <div class="screen-num">01</div>
+    <div>
+      <h3>A question running</h3>
+      <p>Trace rail streams live. The user watches the agent work rather than a spinner.</p>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <div class="chrome"><i class="dot"></i><i class="dot"></i><i class="dot"></i><div class="url">erp.emotorad.local/app/research-agent</div></div>
+    <div class="desk">
+      <nav class="deskbar">
+        <div class="grp">Research Agent</div>
+        <a href="#" class="on"><i class="sq b"></i>Research Agent</a>
+        <a href="#"><i class="sq"></i>Research Session</a>
+        <a href="#"><i class="sq"></i>Market Research Report</a>
+        <a href="#"><i class="sq"></i>Agent Action Request</a>
+        <div class="grp">Configuration</div>
+        <a href="#"><i class="sq"></i>Settings</a>
+        <a href="#"><i class="sq"></i>Agent Tool</a>
+        <a href="#"><i class="sq"></i>MCP Server</a>
+      </nav>
+      <div class="deskmain">
+        <div class="crumb">
+          <div><h4>Research Agent</h4><div class="sub">RS-2026-00184</div></div>
+          <div class="btns"><span class="btn">Recent sessions</span><span class="btn">Settings</span></div>
+        </div>
+
+        <div class="ask">
+          <div class="q">Compare our COGS per unit on the top 3 bike models over the last six months, and tell me which one is bleeding margin.</div>
+          <div class="foot"><span class="hint">Cmd or Ctrl + Enter to run</span><span class="btn p">Run research</span></div>
+        </div>
+
+        <div class="panes">
+          <div>
+            <div class="card" style="padding:26px 16px;text-align:center;border-style:dashed;color:var(--muted);font-size:13px">
+              Working. The answer and its charts appear here as they are produced.
+            </div>
+            <div class="card">
+              <div class="card-t">Realised COGS per unit · last 6 months</div>
+              <svg viewBox="0 0 520 150" style="width:100%;height:auto">
+                <line x1="42" y1="20" x2="510" y2="20" stroke="#F0F2F4"/><line x1="42" y1="55" x2="510" y2="55" stroke="#F0F2F4"/>
+                <line x1="42" y1="90" x2="510" y2="90" stroke="#F0F2F4"/><line x1="42" y1="125" x2="510" y2="125" stroke="#E2E6E9"/>
+                <text x="36" y="24" text-anchor="end" style="font:9px Inter;fill:#B0B7BE">50k</text>
+                <text x="36" y="94" text-anchor="end" style="font:9px Inter;fill:#B0B7BE">30k</text>
+                <polyline points="80,72 152,70 224,66 296,58 368,44 440,34" fill="none" stroke="#2490EF" stroke-width="2" stroke-linecap="round"/>
+                <polyline points="80,96 152,94 224,90 296,86 368,76 440,68" fill="none" stroke="#E8880A" stroke-width="2" stroke-linecap="round"/>
+                <polyline points="80,110 152,111 224,109 296,110 368,108 440,107" fill="none" stroke="#1FA65A" stroke-width="2" stroke-linecap="round"/>
+                <g style="font:9px Inter;fill:#8D99A6">
+                  <text x="80" y="140" text-anchor="middle">Mar</text><text x="152" y="140" text-anchor="middle">Apr</text>
+                  <text x="224" y="140" text-anchor="middle">May</text><text x="296" y="140" text-anchor="middle">Jun</text>
+                  <text x="368" y="140" text-anchor="middle">Jul</text><text x="440" y="140" text-anchor="middle">Aug</text>
+                </g>
+                <g style="font:10px Inter"><circle cx="452" cy="34" r="3" fill="#2490EF"/><text x="460" y="37" fill="#383838">X1 Pro</text>
+                <circle cx="452" cy="68" r="3" fill="#E8880A"/><text x="460" y="71" fill="#383838">C2</text>
+                <circle cx="452" cy="107" r="3" fill="#1FA65A"/><text x="460" y="110" fill="#383838">C1</text></g>
+              </svg>
+            </div>
+          </div>
+
+          <aside class="rail">
+            <div class="rail-h"><i class="pulse"></i><span>Researching</span><span class="pill" style="background:var(--blue-bg);color:var(--blue-dk)">trial 1</span></div>
+            <div class="rail-b">
+              <div class="tlab">Trial 1</div>
+              <div class="step"><span class="ic">▸</span><span class="nm">Plan</span><span class="ms">1.4s</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">erp_company_context</span><span class="ms">61ms</span></div>
+              <div class="step tool"><span class="ic">▾</span><span class="nm">erp_item_cost</span><span class="ms">840ms</span></div>
+              <div class="expand">{
+  "item_group": "Bikes",
+  "from_date": "2026-03-01",
+  "to_date": "2026-08-09"
+}</div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">analyse_data</span><span class="ms">210ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">create_chart</span><span class="ms">44ms</span></div>
+              <div class="step" style="border-left-color:#C8CFD5;color:var(--muted)"><span class="ic">◦</span><span class="nm" style="color:var(--muted)">create_table…</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2 ------------------------------------------------------- -->
+  <div class="screen-cap">
+    <div class="screen-num">02</div>
+    <div>
+      <h3>Answer, with the retry visible</h3>
+      <p>Trial 1 failed its own evaluation. The rail shows why, what it told itself, and that trial 2 passed at 0.91.</p>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <div class="chrome"><i class="dot"></i><i class="dot"></i><i class="dot"></i><div class="url">erp.emotorad.local/app/research-agent</div></div>
+    <div class="desk">
+      <nav class="deskbar">
+        <div class="grp">Research Agent</div>
+        <a href="#" class="on"><i class="sq b"></i>Research Agent</a>
+        <a href="#"><i class="sq"></i>Research Session</a>
+        <a href="#"><i class="sq"></i>Market Research Report</a>
+        <a href="#"><i class="sq"></i>Agent Action Request</a>
+        <div class="grp">Configuration</div>
+        <a href="#"><i class="sq"></i>Settings</a>
+        <a href="#"><i class="sq"></i>Agent Tool</a>
+        <a href="#"><i class="sq"></i>MCP Server</a>
+      </nav>
+      <div class="deskmain">
+        <div class="crumb">
+          <div><h4>Research Agent</h4><div class="sub">RS-2026-00185 · 2 trials · 74s · 41k tokens</div></div>
+          <div class="btns"><span class="btn">Recent sessions</span><span class="btn">Settings</span></div>
+        </div>
+
+        <div class="ask">
+          <div class="q">What is the current COGS on the bike models?</div>
+          <div class="foot"><span class="hint">Cmd or Ctrl + Enter to run</span><span class="btn p">Run research</span></div>
+        </div>
+
+        <div class="panes">
+          <div>
+            <div class="card answer">
+              <p><strong>Realised COGS is running ₹42,180 per unit on average across the six active models, 6.2% above what the BOMs say it should be.</strong></p>
+              <p>The gap is concentrated in two models. EM-X1 Pro is 11.4% over BOM and EM-C2 is 9.8% over. The other four sit within 2%.</p>
+              <p>COGS means three things here and they disagree, which is the finding: <strong>stock valuation</strong> is what the balance sheet carries, <strong>BOM cost</strong> is what engineering expects, and <strong>realised COGS</strong> is what the units we actually sold cost us. On X1 Pro all three agree with each other and all three are above the BOM baseline set in March, so this is real input cost drift, not a valuation artefact.</p>
+              <p class="src">Sources: Bin valuation as at 09-Aug-2026 · active default BOMs · Gross Profit report, EMotorad India, 01-Aug to 09-Aug-2026, submitted invoices only.</p>
+            </div>
+
+            <div class="mrow">
+              <div class="card metric"><div class="card-t">Avg realised COGS / unit</div><div class="v">₹42,180</div><div class="d bad">▲ 6.2% <span>vs BOM cost</span></div></div>
+              <div class="card metric"><div class="card-t">Models over BOM</div><div class="v">2 <span style="font-size:15px;color:var(--muted);font-weight:500">of 6</span></div><div class="d n">X1 Pro, C2</div></div>
+              <div class="card metric"><div class="card-t">Margin at risk / month</div><div class="v">₹8.4 L</div><div class="d bad">▲ <span>at current mix</span></div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-t">Variance vs BOM cost, by model</div>
+              <svg viewBox="0 0 520 132" style="width:100%;height:auto">
+                <line x1="52" y1="14" x2="512" y2="14" stroke="#F0F2F4"/>
+                <line x1="52" y1="47" x2="512" y2="47" stroke="#F0F2F4"/>
+                <line x1="52" y1="80" x2="512" y2="80" stroke="#E2E6E9"/>
+                <text x="46" y="18" text-anchor="end" style="font:9px Inter;fill:#B0B7BE">12%</text>
+                <text x="46" y="51" text-anchor="end" style="font:9px Inter;fill:#B0B7BE">6%</text>
+                <text x="46" y="84" text-anchor="end" style="font:9px Inter;fill:#B0B7BE">0</text>
+                <rect x="72"  y="17" width="46" height="63" rx="3" fill="#E24C4C"/>
+                <rect x="146" y="26" width="46" height="54" rx="3" fill="#E24C4C"/>
+                <rect x="220" y="70" width="46" height="10" rx="3" fill="#2490EF"/>
+                <rect x="294" y="71" width="46" height="9"  rx="3" fill="#2490EF"/>
+                <rect x="368" y="75" width="46" height="5"  rx="3" fill="#2490EF"/>
+                <rect x="442" y="80" width="46" height="4"  rx="3" fill="#1FA65A"/>
+                <g style="font:9px Inter;fill:#8D99A6">
+                  <text x="95"  y="98" text-anchor="middle">X1 Pro</text><text x="169" y="98" text-anchor="middle">C2</text>
+                  <text x="243" y="98" text-anchor="middle">C1</text><text x="317" y="98" text-anchor="middle">T3</text>
+                  <text x="391" y="98" text-anchor="middle">U2</text><text x="465" y="98" text-anchor="middle">S1</text>
+                </g>
+                <g style="font:600 9px Inter;fill:#383838">
+                  <text x="95"  y="12" text-anchor="middle">+11.4</text><text x="169" y="21" text-anchor="middle">+9.8</text>
+                  <text x="243" y="65" text-anchor="middle">+1.9</text><text x="317" y="66" text-anchor="middle">+1.7</text>
+                  <text x="391" y="70" text-anchor="middle">+1.0</text><text x="465" y="75" text-anchor="middle">−0.6</text>
+                </g>
+              </svg>
+            </div>
+
+            <div class="card">
+              <div class="card-t">Cost per unit by model, all three bases <span class="tag n" style="margin-left:6px">6 rows</span></div>
+              <table>
+                <thead><tr><th>Model</th><th class="num">Valuation rate</th><th class="num">BOM cost</th><th class="num">Realised COGS</th><th class="num">vs BOM</th></tr></thead>
+                <tbody>
+                  <tr><td>EM-X1 Pro</td><td class="num">48,900</td><td class="num">43,900</td><td class="num">48,910</td><td class="num pos">+11.4%</td></tr>
+                  <tr><td>EM-C2</td><td class="num">39,200</td><td class="num">35,700</td><td class="num">39,190</td><td class="num pos">+9.8%</td></tr>
+                  <tr><td>EM-C1</td><td class="num">31,450</td><td class="num">30,800</td><td class="num">31,400</td><td class="num">+1.9%</td></tr>
+                  <tr><td>EM-T3</td><td class="num">52,100</td><td class="num">51,200</td><td class="num">52,050</td><td class="num">+1.7%</td></tr>
+                  <tr><td>EM-U2</td><td class="num">28,900</td><td class="num">28,600</td><td class="num">28,880</td><td class="num">+1.0%</td></tr>
+                  <tr><td>EM-S1</td><td class="num">36,700</td><td class="num">36,900</td><td class="num">36,690</td><td class="num neg">−0.6%</td></tr>
+                </tbody>
+              </table>
+              <div style="margin-top:10px"><span class="btn">Pin chart to workspace</span></div>
+            </div>
+          </div>
+
+          <aside class="rail">
+            <div class="rail-h"><i class="pulse done"></i><span>Completed</span><span class="pill g">score 0.91</span></div>
+            <div class="rail-b">
+              <div class="tlab">Trial 1</div>
+              <div class="step"><span class="ic">▸</span><span class="nm">Plan</span><span class="ms">1.2s</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">erp_list_doctypes</span><span class="ms">38ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">erp_fetch_records</span><span class="ms">120ms</span></div>
+              <div class="step"><span class="ic">▸</span><span class="nm">Draft</span><span class="ms">4.1s</span></div>
+              <div class="step ev fail"><span class="ic">▾</span><span class="nm">Evaluation · 0.58 FAIL</span></div>
+              <div class="expand">artifacts 0.00 — the question implies a
+comparison and no chart, table or metric
+was created.
+
+grounding 0.71 — 2 of 7 figures do not
+appear in any tool output.</div>
+              <div class="step ref"><span class="ic">▾</span><span class="nm">Reflection</span><span class="ms">2.6s</span></div>
+              <div class="expand">Call erp_item_cost, not erp_fetch_records.
+COGS has three definitions and the generic
+query only returned valuation_rate.
+Pass item_group='Bikes' to cover all models.
+Compute per-unit variance in analyse_data,
+not in your head.
+Call create_table and create_chart. Last
+attempt described the comparison in words.</div>
+
+              <div class="tlab">Trial 2 <em>after reflection</em></div>
+              <div class="step"><span class="ic">▸</span><span class="nm">Plan</span><span class="ms">1.1s</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">erp_company_context</span><span class="ms">55ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">erp_item_cost</span><span class="ms">910ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">analyse_data</span><span class="ms">180ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">create_metric</span><span class="ms">32ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">create_chart</span><span class="ms">41ms</span></div>
+              <div class="step tool"><span class="ic">▸</span><span class="nm">create_table</span><span class="ms">36ms</span></div>
+              <div class="step"><span class="ic">▸</span><span class="nm">Draft</span><span class="ms">5.3s</span></div>
+              <div class="step ev"><span class="ic">▾</span><span class="nm">Evaluation · 0.91 PASS</span></div>
+              <div class="expand">grounding      1.00
+erp_grounded   1.00
+artifacts      1.00
+source_quality 1.00
+llm_judge      0.83</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3 ------------------------------------------------------- -->
+  <div class="screen-cap">
+    <div class="screen-num">03</div>
+    <div>
+      <h3>An action waiting for approval</h3>
+      <p>The agent proposed. Nothing has changed in the ERP. A human reads the diff and decides.</p>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <div class="chrome"><i class="dot"></i><i class="dot"></i><i class="dot"></i><div class="url">erp.emotorad.local/app/agent-action-request/AAR-2026-00031</div></div>
+    <div class="desk">
+      <nav class="deskbar">
+        <div class="grp">Research Agent</div>
+        <a href="#"><i class="sq"></i>Research Agent</a>
+        <a href="#"><i class="sq"></i>Research Session</a>
+        <a href="#"><i class="sq"></i>Market Research Report</a>
+        <a href="#" class="on"><i class="sq b"></i>Agent Action Request</a>
+        <div class="grp">Configuration</div>
+        <a href="#"><i class="sq"></i>Settings</a>
+        <a href="#"><i class="sq"></i>Agent Tool</a>
+        <a href="#"><i class="sq"></i>MCP Server</a>
+      </nav>
+      <div class="deskmain">
+        <div class="crumb">
+          <div><h4>AAR-2026-00031</h4><div class="sub"><span class="tag o">Pending Approval</span></div></div>
+          <div class="btns"><span class="btn d">Reject</span><span class="btn g">Approve and run</span></div>
+        </div>
+
+        <div class="banner o">
+          <div><b>Create Material Request. Risk Medium.</b><br>Nothing has been created yet. Approving will insert this document as <b>pranav@erpion.in</b>, under their own permissions, not yours.</div>
+        </div>
+
+        <div class="card">
+          <div class="fsec">Why</div>
+          <div class="fgrid">
+            <div class="f wide"><label>Reason given by the agent</label><div class="val">Frame assembly stock covers 4 days at the current build rate of 62 units/day. Lead time on this item is 11 days.</div></div>
+            <div class="f wide"><label>Originating prompt</label><div class="val" style="color:var(--muted)">"Check whether any raw material will run out before its lead time covers it, and raise requests where needed."</div></div>
+            <div class="f"><label>Research Session</label><div class="val link">RS-2026-00186</div></div>
+            <div class="f"><label>Requested by</label><div class="val">pranav@erpion.in · 09-Aug-2026 09:14</div></div>
+          </div>
+
+          <div class="fsec">What will change</div>
+          <table>
+            <thead><tr><th style="width:34%">Field</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">material_request_type</td><td>Purchase</td></tr>
+              <tr><td class="mono">company</td><td>EMotorad India Pvt Ltd</td></tr>
+              <tr><td class="mono">schedule_date</td><td>2026-08-20</td></tr>
+              <tr><td class="mono">items</td><td class="mono">[{"item_code":"RM-FRM-A2","qty":500,"warehouse":"Stores - EMI","rate":2840}]</td></tr>
+            </tbody>
+          </table>
+
+          <div class="fsec">Guard rails applied</div>
+          <div class="fgrid">
+            <div class="f"><label>Estimated value</label><div class="val">₹14,20,000</div></div>
+            <div class="f"><label>Auto-approve</label><div class="val">No — over the ₹2,00,000 ceiling</div></div>
+            <div class="f"><label>Approver role</label><div class="val">Purchase Manager</div></div>
+            <div class="f"><label>Self approval</label><div class="val">Not allowed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4 ------------------------------------------------------- -->
+  <div class="screen-cap">
+    <div class="screen-num">04</div>
+    <div>
+      <h3>Research that survives the conversation</h3>
+      <p>A submittable ERPNext document, linked to the item group, that shows up on the Item dashboard six months later.</p>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <div class="chrome"><i class="dot"></i><i class="dot"></i><i class="dot"></i><div class="url">erp.emotorad.local/app/market-research-report/MRR-2026-00007</div></div>
+    <div class="desk">
+      <nav class="deskbar">
+        <div class="grp">Research Agent</div>
+        <a href="#"><i class="sq"></i>Research Agent</a>
+        <a href="#"><i class="sq"></i>Research Session</a>
+        <a href="#" class="on"><i class="sq b"></i>Market Research Report</a>
+        <a href="#"><i class="sq"></i>Agent Action Request</a>
+        <div class="grp">Configuration</div>
+        <a href="#"><i class="sq"></i>Settings</a>
+        <a href="#"><i class="sq"></i>Agent Tool</a>
+        <a href="#"><i class="sq"></i>MCP Server</a>
+      </nav>
+      <div class="deskmain">
+        <div class="crumb">
+          <div><h4>MRR-2026-00007</h4><div class="sub"><span class="tag n">Draft</span> · Competitor</div></div>
+          <div class="btns"><span class="btn">Open Research Session</span><span class="btn p">Submit</span></div>
+        </div>
+
+        <div class="banner g"><div>Source quality <b>78%</b>. Sources look reasonable — 7 of 9 from preferred domains.</div></div>
+
+        <div class="card">
+          <div class="fgrid">
+            <div class="f wide"><label>Subject</label><div class="val" style="font-weight:600">Competitor pricing, 125cc-equivalent electric commuters, Pune, Aug 2026</div></div>
+            <div class="f"><label>Research Type</label><div class="val">Competitor</div></div>
+            <div class="f"><label>Research Date</label><div class="val">09-08-2026</div></div>
+            <div class="f"><label>Item Group</label><div class="val link">Bikes</div></div>
+            <div class="f"><label>Territory</label><div class="val link">Maharashtra</div></div>
+            <div class="f"><label>Brand</label><div class="val link">EMotorad</div></div>
+            <div class="f"><label>Confidence Score</label><div class="val">0.74</div></div>
+          </div>
+
+          <div class="fsec">Executive summary</div>
+          <div class="answer" style="font-size:13px">
+            <p>Street pricing in the segment has compressed roughly 6% since March, driven by two entrants discounting to hold share rather than by input costs falling. Our X1 Pro now sits at the top of the band with the largest cost drift, which is the worst combination.</p>
+            <p>Two of the three comparable models now bundle a 3-year battery warranty at no extra cost. That is the differentiator being competed on, not headline price.</p>
+          </div>
+
+          <div class="fsec">Key findings <span class="tag n">4</span></div>
+          <table>
+            <thead><tr><th style="width:46%">Finding</th><th>Category</th><th>Impact</th><th class="num">Conf.</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td>Segment street price down ~6% since March, entrant-led</td><td><span class="tag b">Pricing</span></td><td><span class="tag r">High</span></td><td class="num">0.80</td><td class="mono">livemint.com</td></tr>
+              <tr><td>Two of three comparables bundle 3-yr battery warranty</td><td><span class="tag b">Competitor</span></td><td><span class="tag r">High</span></td><td class="num">0.85</td><td class="mono">competitor site</td></tr>
+              <tr><td>Cell prices flat QoQ, so discounting is margin-funded</td><td><span class="tag b">Market</span></td><td><span class="tag o">Medium</span></td><td class="num">0.65</td><td class="mono">reuters.com</td></tr>
+              <tr><td>FAME-equivalent state subsidy unchanged through FY27</td><td><span class="tag b">Regulatory</span></td><td><span class="tag n">Low</span></td><td class="num">0.70</td><td class="mono">pib.gov.in</td></tr>
+            </tbody>
+          </table>
+
+          <div class="fsec">Competitor observations <span class="tag n">3</span></div>
+          <table>
+            <thead><tr><th>Competitor</th><th>Model</th><th class="num">Observed price</th><th>Positioning</th></tr></thead>
+            <tbody>
+              <tr><td>Competitor A</td><td>Commuter 125e</td><td class="num">₹1,04,900</td><td>Volume, dealer-heavy</td></tr>
+              <tr><td>Competitor B</td><td>Urban Pro</td><td class="num">₹1,12,500</td><td>Premium spec, D2C</td></tr>
+              <tr><td>Competitor C</td><td>City X</td><td class="num">₹98,000</td><td>Price entry</td></tr>
+            </tbody>
+          </table>
+
+          <div class="fsec">Recommendations <span class="tag n">2</span></div>
+          <table>
+            <thead><tr><th style="width:52%">Recommendation</th><th>Priority</th><th>Owner</th></tr></thead>
+            <tbody>
+              <tr><td>Hold X1 Pro list price, fix the 11.4% BOM drift first. Discounting on top of a cost problem compounds it.</td><td><span class="tag r">High</span></td><td>Pricing</td></tr>
+              <tr><td>Cost the 3-year battery warranty as a bundled option before the next quarter's plan.</td><td><span class="tag o">Medium</span></td><td>Product</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5 ------------------------------------------------------- -->
+  <div class="screen-cap">
+    <div class="screen-num">05</div>
+    <div>
+      <h3>What an administrator controls</h3>
+      <p>Ships disabled with no keys. The write path is a separate, deliberate decision from the read path.</p>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <div class="chrome"><i class="dot"></i><i class="dot"></i><i class="dot"></i><div class="url">erp.emotorad.local/app/research-agent-settings</div></div>
+    <div class="desk">
+      <nav class="deskbar">
+        <div class="grp">Research Agent</div>
+        <a href="#"><i class="sq"></i>Research Agent</a>
+        <a href="#"><i class="sq"></i>Research Session</a>
+        <a href="#"><i class="sq"></i>Market Research Report</a>
+        <a href="#"><i class="sq"></i>Agent Action Request</a>
+        <div class="grp">Configuration</div>
+        <a href="#" class="on"><i class="sq b"></i>Settings</a>
+        <a href="#"><i class="sq"></i>Agent Tool</a>
+        <a href="#"><i class="sq"></i>MCP Server</a>
+      </nav>
+      <div class="deskmain">
+        <div class="crumb">
+          <div><h4>Research Agent Settings</h4><div class="sub">Frappe 16.1.2 · ERPNext 16.0.4 · Manufacturing detected</div></div>
+          <div class="btns"><span class="btn">Show my tools</span><span class="btn">Check compatibility</span><span class="btn p">Save</span></div>
+        </div>
+
+        <div class="card">
+          <div class="fsec">Models</div>
+          <div class="fgrid">
+            <div class="f"><label>Planner model — decides the approach</label><div class="val mono">o4-mini</div></div>
+            <div class="f"><label>Worker model — runs the tool loop</label><div class="val mono">gpt-4.1-mini</div></div>
+            <div class="f"><label>Reflector model — judges and reflects</label><div class="val mono">gpt-4.1</div></div>
+            <div class="f"><label>Claude model</label><div class="val mono">claude-sonnet-4-6</div></div>
+            <div class="f"><label>OpenAI API Key</label><div class="val mono">••••••••••••••••  <span class="tag g">tested</span></div></div>
+            <div class="f"><label>Tavily API Key</label><div class="val mono">••••••••••••••••  <span class="tag g">tested</span></div></div>
+          </div>
+
+          <div class="fsec">Reflexion loop</div>
+          <div class="fgrid">
+            <div class="f"><label>Max trials</label><div class="val">2</div></div>
+            <div class="f"><label>Max tool calls per trial</label><div class="val">18</div></div>
+            <div class="f"><label>Pass threshold</label><div class="val">0.75</div></div>
+            <div class="f"><label>Daily runs per user</label><div class="val">20</div></div>
+          </div>
+
+          <div class="fsec">Data access</div>
+          <div class="fgrid">
+            <div class="f wide"><div class="chk"><i class="box"></i><div><b>Allow read-only SQL</b><span class="hlp">Off. Turn on for joins the structured tools cannot express. Every table is still permission-checked against the calling user.</span></div></div></div>
+            <div class="f wide"><label>DocType allowlist</label><div class="val"><span class="tag n">Sales Invoice</span> <span class="tag n">Sales Order</span> <span class="tag n">Payment Entry</span> <span class="tag n">Stock Entry</span> <span class="tag n">Work Order</span> <span class="tag n">BOM</span> <span class="tag n">Item</span> <span class="tag n">Bin</span> <span class="tag n">+6</span></div></div>
+          </div>
+
+          <div class="fsec">Write actions</div>
+          <div class="banner o"><div>The agent still cannot write directly. It can only raise Agent Action Requests that someone approves. Name the writable DocTypes explicitly rather than leaving the list empty, and keep auto-approve off until you have watched a few requests come through.</div></div>
+          <div class="fgrid">
+            <div class="f wide"><div class="chk"><i class="box on"></i><div><b>Allow write actions</b><span class="hlp">Lets the agent propose changes.</span></div></div></div>
+            <div class="f"><label>Approver role</label><div class="val">Purchase Manager</div></div>
+            <div class="f"><label>Expire pending actions after</label><div class="val">72 hours</div></div>
+            <div class="f wide"><label>Writable DocTypes</label><div class="val"><span class="tag n">Material Request</span> <span class="tag n">Lead</span> <span class="tag n">Task</span> <span class="tag n">ToDo</span></div></div>
+            <div class="f wide"><div class="chk"><i class="box on"></i><div><b>Enable auto-approve</b><span class="hlp">Submit, Cancel and Delete are never auto-approved, regardless of this setting.</span></div></div></div>
+            <div class="f"><label>Auto-approve DocTypes</label><div class="val"><span class="tag n">Task</span> <span class="tag n">ToDo</span></div></div>
+            <div class="f"><label>Auto-approve value ceiling</label><div class="val">₹2,00,000</div></div>
+            <div class="f wide"><div class="chk"><i class="box"></i><div><b>Allow self approval</b><span class="hlp">Off. The person who asked cannot approve their own request.</span></div></div></div>
+          </div>
+
+          <div class="fsec">MCP</div>
+          <div class="fgrid">
+            <div class="f wide"><div class="chk"><i class="box on"></i><div><b>Use external MCP servers</b><span class="hlp">2 servers registered, 14 tools discovered, last synced 22 minutes ago.</span></div></div></div>
+            <div class="f wide"><div class="chk"><i class="box on"></i><div><b>Expose ERPNext as an MCP server</b><span class="hlp">Serving at /api/method/research_agent.agent.mcp.server.handle — clients authenticate with a Frappe API key and inherit that user's permissions.</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<section>
+  <h2>03 · Enforcement</h2>
+  <div class="lead">Where a request can be stopped</div>
+  <p class="note">Four gates on the read path, five on the write path. None of them are optional and none can be turned off by a prompt.</p>
+
+  <div class="diagram">
+  <svg viewBox="0 0 1120 320" role="img" aria-label="Permission enforcement layers for read and write paths">
+    <style>
+      .g{fill:#fff;stroke:#E2E6E9}
+      .gt{font:600 12px Inter,sans-serif;fill:#1F272E}
+      .gs{font:10.5px Inter,sans-serif;fill:#8D99A6}
+      .hd{font:600 10px Inter,sans-serif;fill:#8D99A6;letter-spacing:.09em}
+    </style>
+    <text x="40" y="30" class="hd">READ PATH</text>
+    <g>
+      <rect class="g" x="40" y="42" width="188" height="66" rx="7"/>
+      <text x="58" y="66" class="gt">1 · Settings allowlist</text>
+      <text x="58" y="83" class="gs">A ceiling on the whole</text><text x="58" y="97" class="gs">surface, never a grant</text>
+
+      <rect class="g" x="252" y="42" width="188" height="66" rx="7"/>
+      <text x="270" y="66" class="gt">2 · has_permission</text>
+      <text x="270" y="83" class="gs">The calling user, not a</text><text x="270" y="97" class="gs">service account</text>
+
+      <rect class="g" x="464" y="42" width="188" height="66" rx="7"/>
+      <text x="482" y="66" class="gt">3 · get_list</text>
+      <text x="482" y="83" class="gs">User Permissions, shares,</text><text x="482" y="97" class="gs">permission queries</text>
+
+      <rect class="g" x="676" y="42" width="188" height="66" rx="7"/>
+      <text x="694" y="66" class="gt">4 · Row cap</text>
+      <text x="694" y="83" class="gs">500 default, 5,000 hard</text><text x="694" y="97" class="gs">ceiling in code</text>
+
+      <rect class="g" x="888" y="42" width="192" height="66" rx="7" fill="#E9F7EF" stroke="#C4E8D4"/>
+      <text x="906" y="74" class="gt">Rows returned</text>
+      <text x="906" y="91" class="gs">to the model</text>
+    </g>
+    <g stroke="#C8CFD5" stroke-width="1.5" fill="none">
+      <path d="M228,75 L246,75" marker-end="url(#a)"/><path d="M440,75 L458,75" marker-end="url(#a)"/>
+      <path d="M652,75 L670,75" marker-end="url(#a)"/><path d="M864,75 L882,75" marker-end="url(#a)"/>
+    </g>
+
+    <text x="40" y="168" class="hd">WRITE PATH</text>
+    <g>
+      <rect class="g" x="40" y="180" width="150" height="66" rx="7" fill="#FDF3E4" stroke="#F5DEB6"/>
+      <text x="56" y="204" class="gt">1 · Enabled?</text>
+      <text x="56" y="221" class="gs">Off by default</text>
+
+      <rect class="g" x="204" y="180" width="150" height="66" rx="7" fill="#FDEDED" stroke="#F3C4C4"/>
+      <text x="220" y="204" class="gt">2 · Hard block</text>
+      <text x="220" y="221" class="gs">User, Role, Script,</text><text x="220" y="235" class="gs">Settings — in code</text>
+
+      <rect class="g" x="368" y="180" width="150" height="66" rx="7"/>
+      <text x="384" y="204" class="gt">3 · Allowlist</text>
+      <text x="384" y="221" class="gs">Named DocTypes</text><text x="384" y="235" class="gs">only</text>
+
+      <rect class="g" x="532" y="180" width="150" height="66" rx="7"/>
+      <text x="548" y="204" class="gt">4 · User perm</text>
+      <text x="548" y="221" class="gs">Requester must hold</text><text x="548" y="235" class="gs">it themselves</text>
+
+      <rect class="g" x="696" y="180" width="170" height="66" rx="7" fill="#F0F8FF" stroke="#BFDFFA"/>
+      <text x="712" y="204" class="gt">5 · Human approves</text>
+      <text x="712" y="221" class="gs">Or auto-approve rule:</text><text x="712" y="235" class="gs">doctype + value ceiling</text>
+
+      <rect class="g" x="880" y="180" width="200" height="66" rx="7" fill="#E9F7EF" stroke="#C4E8D4"/>
+      <text x="896" y="204" class="gt">Executes as requester</text>
+      <text x="896" y="221" class="gs">Not as the approver. Result</text><text x="896" y="235" class="gs">docname written back.</text>
+    </g>
+    <g stroke="#C8CFD5" stroke-width="1.5" fill="none">
+      <path d="M190,213 L198,213" marker-end="url(#a)"/><path d="M354,213 L362,213" marker-end="url(#a)"/>
+      <path d="M518,213 L526,213" marker-end="url(#a)"/><path d="M682,213 L690,213" marker-end="url(#a)"/>
+      <path d="M866,213 L874,213" marker-end="url(#a)"/>
+    </g>
+
+    <text x="40" y="292" class="gs">Submit, Cancel and Delete never reach gate 5 automatically, regardless of configuration, because they post and reverse ledger entries.</text>
+  </svg>
+  </div>
+</section>
+
+<footer style="margin-top:64px;padding-top:24px;border-top:1px solid var(--line-2);color:var(--muted);font-size:13px">
+  Research Agent v0.1.0 · MIT · ERPion Technologies LLP. Figures shown are illustrative, drawn from the eval suite scenarios.
+</footer>
+
+</div>
+</body>
+</html>

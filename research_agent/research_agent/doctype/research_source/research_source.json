@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Source",
+ "field_order": [
+  "url",
+  "title",
+  "domain",
+  "is_preferred",
+  "published_date",
+  "snippet"
+ ],
+ "fields": [
+  {
+   "fieldname": "url",
+   "label": "URL",
+   "fieldtype": "Data",
+   "options": "URL",
+   "in_list_view": 1,
+   "columns": 4,
+   "reqd": 1
+  },
+  {
+   "fieldname": "title",
+   "label": "Title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 3
+  },
+  {
+   "fieldname": "domain",
+   "label": "Domain",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 2,
+   "read_only": 1
+  },
+  {
+   "fieldname": "is_preferred",
+   "label": "Preferred",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "columns": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "published_date",
+   "label": "Published",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "snippet",
+   "label": "Snippet",
+   "fieldtype": "Small Text"
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}

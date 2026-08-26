@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Finding",
+ "field_order": [
+  "finding",
+  "category",
+  "impact",
+  "confidence",
+  "evidence",
+  "source_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "finding",
+   "label": "Finding",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "columns": 5,
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "label": "Category",
+   "fieldtype": "Select",
+   "options": "Market\nPricing\nCompetitor\nRegulatory\nDemand\nSupply\nRisk\nOther",
+   "default": "Other",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "impact",
+   "label": "Impact",
+   "fieldtype": "Select",
+   "options": "High\nMedium\nLow",
+   "default": "Medium",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "confidence",
+   "label": "Confidence",
+   "fieldtype": "Float",
+   "precision": "2",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "evidence",
+   "label": "Evidence",
+   "fieldtype": "Small Text",
+   "description": "The number, quote or figure this rests on."
+  },
+  {
+   "fieldname": "source_url",
+   "label": "Source URL",
+   "fieldtype": "Data",
+   "options": "URL",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 3
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}
