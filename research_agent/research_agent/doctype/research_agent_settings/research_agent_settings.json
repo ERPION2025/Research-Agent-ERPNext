@@ -65,6 +65,16 @@
   "allow_self_approval",
   "action_expiry_hours",
   "auto_approve_value_limit",
+  "sb_kb",
+  "enable_knowledge_base",
+  "embedding_model",
+  "index_doctypes",
+  "cb_kb",
+  "kb_denied_doctypes",
+  "index_unattached_files",
+  "ocr_scanned_pages",
+  "ocr_model",
+  "reindex_now",
   "sb_mcp",
   "enable_mcp_client",
   "cb_mcp",
@@ -386,6 +396,74 @@
    "fieldtype": "Currency",
    "depends_on": "enable_auto_approve",
    "description": "Proposals above this value always need a human. 0 means no ceiling, which is not recommended."
+  },
+  {
+   "fieldname": "sb_kb",
+   "fieldtype": "Section Break",
+   "label": "Knowledge Base (Documents)"
+  },
+  {
+   "fieldname": "enable_knowledge_base",
+   "label": "Enable Document Search",
+   "fieldtype": "Check",
+   "default": "0",
+   "description": "Indexes PDFs and images attached to ERPNext documents so the agent can search their contents. Permissions are inherited from the document each file is attached to."
+  },
+  {
+   "fieldname": "embedding_model",
+   "label": "Embedding Model",
+   "fieldtype": "Data",
+   "default": "text-embedding-3-small",
+   "depends_on": "enable_knowledge_base",
+   "description": "Uses OpenAI. Document text is sent to this API at index time."
+  },
+  {
+   "fieldname": "index_doctypes",
+   "label": "Index Files Attached To",
+   "fieldtype": "Table MultiSelect",
+   "options": "Research Agent Indexed DocType",
+   "depends_on": "enable_knowledge_base",
+   "description": "Only files attached to these DocTypes are indexed. Leave empty to index files on any DocType the reader can already access."
+  },
+  {
+   "fieldname": "cb_kb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "kb_denied_doctypes",
+   "label": "Never Index",
+   "fieldtype": "Small Text",
+   "depends_on": "enable_knowledge_base",
+   "description": "Comma separated, added to a built-in payroll blocklist that cannot be switched off. Content here is never retrievable, whatever the permissions say."
+  },
+  {
+   "fieldname": "index_unattached_files",
+   "label": "Index Unattached Files",
+   "fieldtype": "Check",
+   "default": "0",
+   "depends_on": "enable_knowledge_base",
+   "description": "Files with no parent document inherit no permission. Off means they are never searchable. Turn on only if your Drive files are safe for every user."
+  },
+  {
+   "fieldname": "ocr_scanned_pages",
+   "label": "OCR Scanned Pages",
+   "fieldtype": "Check",
+   "default": "1",
+   "depends_on": "enable_knowledge_base",
+   "description": "Pages with no text layer are sent to a vision model as images. Costs a fraction of a cent per page and is the only way scanned invoices work."
+  },
+  {
+   "fieldname": "ocr_model",
+   "label": "OCR Model",
+   "fieldtype": "Data",
+   "default": "gpt-4.1-mini",
+   "depends_on": "ocr_scanned_pages"
+  },
+  {
+   "fieldname": "reindex_now",
+   "label": "Reindex All Documents",
+   "fieldtype": "Button",
+   "depends_on": "enable_knowledge_base"
   },
   {
    "fieldname": "sb_mcp",

@@ -28,6 +28,7 @@ import frappe
 from frappe.utils import now_datetime
 
 from research_agent.agent import evaluator
+from research_agent.agent.rag import citation
 from research_agent.agent.llm import get_llm
 from research_agent.agent.registry import available_tools, envelope_to_text, execute, tool_schemas
 
@@ -62,6 +63,24 @@ How to work:
 8. After real external research, call publish_research_report so the findings
    become a permanent document linked to the item or brand. Not for routine
    internal reporting.
+
+Documents versus the ledger:
+- kb_search reads the paperwork: contracts, scanned vendor invoices, POs, GRNs,
+  specifications. Use it for what a document SAYS.
+- Never compute a business figure from a document. What we spent, sold, produced
+  or owe comes from the erp_ tools, always. Totalling OCR'd line items builds a
+  second, worse set of accounts.
+- When a document and the ERP disagree, that disagreement IS the finding. Report
+  both, say which is which, and do not quietly pick one.
+- Cite the file name and page for anything you take from a document, and quote
+  the wording rather than paraphrasing a clause.
+- An empty kb_search is not proof a document does not exist. Read the
+  diagnostics: nothing indexed, nothing readable by this user, and nothing
+  matched are three different answers. Call kb_index_status if unsure.
+- A hit may carry an arithmetic_flag: the document's own numbers did not sum to
+  its own stated total. That is separate from any ERP comparison. If you quote
+  a total from a flagged document, say so plainly rather than presenting it as
+  settled.
 
 Changing anything:
 - You cannot write to the ERP. You can only propose, using erp_propose_create,
@@ -281,6 +300,8 @@ class ReflexionAgent:
             {"artifact_id": a.artifact_id, "type": a.artifact_type, "title": a.title}
             for a in self.session.artifacts
         ]
+        cite_block = citation.prompt_block({"session": self.session})
+
         resp = llm.chat(
             messages=[
                 {
@@ -288,7 +309,7 @@ class ReflexionAgent:
                     "content": (
                         f"Question:\n{self.session.prompt}\n\n"
                         f"Everything your tools returned:\n{evidence}\n\n"
-                        f"Artifacts you created:\n{json.dumps(artifacts)}\n\n{COMPOSE_PROMPT}"
+                        f"Artifacts you created:\n{json.dumps(artifacts)}{cite_block}\n\n{COMPOSE_PROMPT}"
                     ),
                 }
             ],
@@ -297,6 +318,18 @@ class ReflexionAgent:
         )
         self._track(resp)
         draft = resp.content or ""
+        # Marker audit runs on every draft. A fabricated citation is the one
+        # failure mode this feature could introduce, so it is checked rather
+        # than assumed.
+        audit = citation.validate({"session": self.session}, draft)
+        if audit["unresolved"]:
+            self._log(
+                "Note",
+                content=f"Fabricated citation markers in the draft: {', '.join(audit['unresolved'])}. "
+                        f"These reference passages that were never retrieved.",
+                trial=trial,
+            )
+
         self._log("Draft", content=draft, trial=trial)
         return draft
 
@@ -350,6 +383,7 @@ class ReflexionAgent:
                     artifacts=list(self.session.artifacts),
                     threshold=threshold,
                     use_judge=bool(self.settings.use_llm_judge),
+                    citations=citation.resolve_for_display(self.session),
                 )
                 self._log("Evaluation", content=verdict.critique_text(), output=verdict.to_dict(), trial=trial)
 
@@ -382,6 +416,7 @@ class ReflexionAgent:
                     "answer": best["draft"],
                     "score": best["score"],
                     "artifacts": [json.loads(a.spec) for a in self.session.artifacts if a.spec],
+                    "citations": citation.resolve_for_display(self.session),
                 },
                 user=self.session.owner,
             )

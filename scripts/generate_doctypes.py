@@ -133,6 +133,33 @@ DOCTYPES = {
               description="Proposals above this value always need a human. 0 means no ceiling, "
                           "which is not recommended."),
 
+            sb("sb_kb", "Knowledge Base (Documents)"),
+            f("enable_knowledge_base", "Enable Document Search", "Check", default="0",
+              description="Indexes PDFs and images attached to ERPNext documents so the agent can "
+                          "search their contents. Permissions are inherited from the document each "
+                          "file is attached to."),
+            f("embedding_model", "Embedding Model", "Data", default="text-embedding-3-small",
+              depends_on="enable_knowledge_base",
+              description="Uses OpenAI. Document text is sent to this API at index time."),
+            f("index_doctypes", "Index Files Attached To", "Table MultiSelect",
+              options="Research Agent Indexed DocType", depends_on="enable_knowledge_base",
+              description="Only files attached to these DocTypes are indexed. Leave empty to index "
+                          "files on any DocType the reader can already access."),
+            cb("cb_kb"),
+            f("kb_denied_doctypes", "Never Index", "Small Text", depends_on="enable_knowledge_base",
+              description="Comma separated, added to a built-in payroll blocklist that cannot be "
+                          "switched off. Content here is never retrievable, whatever the permissions say."),
+            f("index_unattached_files", "Index Unattached Files", "Check", default="0",
+              depends_on="enable_knowledge_base",
+              description="Files with no parent document inherit no permission. Off means they are "
+                          "never searchable. Turn on only if your Drive files are safe for every user."),
+            f("ocr_scanned_pages", "OCR Scanned Pages", "Check", default="1",
+              depends_on="enable_knowledge_base",
+              description="Pages with no text layer are sent to a vision model as images. Costs a "
+                          "fraction of a cent per page and is the only way scanned invoices work."),
+            f("ocr_model", "OCR Model", "Data", default="gpt-4.1-mini", depends_on="ocr_scanned_pages"),
+            f("reindex_now", "Reindex All Documents", "Button", depends_on="enable_knowledge_base"),
+
             sb("sb_mcp", "MCP"),
             f("enable_mcp_client", "Use External MCP Servers", "Check", default="1",
               description="Lets the agent call tools from servers registered under MCP Server."),
@@ -195,6 +222,12 @@ DOCTYPES = {
             f("steps", "Steps", "Table", options="Research Step", read_only=1),
             f("reflections", "Reflections", "Long Text", read_only=1),
             f("eval_detail", "Evaluation Detail", "Code", options="JSON", read_only=1),
+
+            sb("sb_citations", "Sources"),
+            f("citations", "Citations", "Table", options="Research Citation", read_only=1),
+            f("uncited_markers", "Unresolved Markers", "Small Text", read_only=1,
+              description="Markers the answer used that match no retrieved passage. Any value "
+                          "here is a fabricated citation and the answer should not be trusted."),
 
             sb("sb_outputs", "Published Outputs"),
             f("research_report", "Market Research Report", "Link", options="Market Research Report", read_only=1),
@@ -412,6 +445,105 @@ DOCTYPES = {
             {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1,
              "report": 1, "export": 1},
             {"role": "All", "read": 1, "create": 1, "if_owner": 1},
+        ],
+    },
+
+
+    # ---------------------------------------------------------- document chunk
+    "Document Chunk": {
+        "autoname": "hash",
+        "title_field": "file_name",
+        "fields": [
+            f("source_file", "File", "Link", options="File", reqd=1, in_list_view=1,
+              description="The permission anchor. Everything about who may read this chunk "
+                          "is decided by this File and the document it is attached to."),
+            f("file_name", "File Name", "Data", read_only=1, in_list_view=1),
+            f("chunk_index", "Chunk", "Int", read_only=1, in_list_view=1),
+            cb("cb_chunk_head"),
+            f("source_doctype", "Attached To DocType", "Link", options="DocType", read_only=1,
+              in_standard_filter=1),
+            f("source_docname", "Attached To", "Dynamic Link", options="source_doctype", read_only=1),
+            f("page_number", "Page", "Int", read_only=1),
+            f("section_heading", "Section", "Data", read_only=1),
+
+            sb("sb_chunk_text", "Content"),
+            f("chunk_text", "Chunk Text", "Long Text", read_only=1,
+              description="Includes a generated context line prepended at index time, which is what "
+                          "makes a clause retrievable without the surrounding document."),
+            f("token_estimate", "Tokens", "Int", read_only=1),
+
+            sb("sb_chunk_vec", "Vector"),
+            f("embedding", "Embedding", "Long Text", read_only=1, hidden=1,
+              description="int8 quantised, 256 dimensions, base64."),
+            f("embedding_model", "Embedded With", "Data", read_only=1),
+            f("content_hash", "Content Hash", "Data", read_only=1, hidden=1, search_index=1,
+              description="Hash of model, dimensions and exact text. Lets a reindex skip chunks "
+                          "whose text has not changed instead of paying to embed them again."),
+            f("indexed_on", "Indexed On", "Datetime", read_only=1),
+        ],
+        "permissions": [
+            {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1},
+        ],
+    },
+
+    "Research Agent Indexed DocType": {
+        "istable": 1,
+        "fields": [f("document_type", "DocType", "Link", options="DocType", in_list_view=1, reqd=1)],
+    },
+
+    # --------------------------------------------------------- indexing status
+    "Document Index Status": {
+        "autoname": "field:source_file",
+        "title_field": "file_name",
+        "fields": [
+            f("source_file", "File", "Link", options="File", reqd=1, unique=1, in_list_view=1),
+            f("file_name", "File Name", "Data", read_only=1, in_list_view=1),
+            f("status", "Status", "Select",
+              options="Queued\nParsing\nIndexed\nSkipped\nFailed",
+              default="Queued", in_list_view=1, in_standard_filter=1),
+            cb("cb_dis_head"),
+            f("chunk_count", "Chunks", "Int", read_only=1, in_list_view=1),
+            f("page_count", "Pages", "Int", read_only=1),
+            f("pages_ocred", "Pages OCR'd", "Int", read_only=1,
+              description="Pages with no text layer that went through the vision model."),
+            f("content_hash", "Content Hash", "Data", read_only=1, hidden=1,
+              description="Skips re-indexing a file whose bytes have not changed."),
+
+            sb("sb_dis_detail", "Detail"),
+            f("skip_reason", "Skip Reason", "Small Text", read_only=1,
+              depends_on="eval:doc.status=='Skipped'"),
+            f("error_log", "Error", "Code", read_only=1, depends_on="eval:doc.status=='Failed'"),
+            f("indexed_on", "Indexed On", "Datetime", read_only=1),
+            f("index_cost", "Index Cost", "Float", precision="4", read_only=1,
+              description="Embedding plus OCR spend for this file, in USD."),
+            f("arithmetic_flags", "Arithmetic Check", "Small Text", read_only=1,
+              description="Set when a page's own line items or tax math does not sum to its "
+                          "stated total. This is the document disagreeing with itself, not with "
+                          "the ERP. Worth checking the original before relying on the total."),
+        ],
+        "permissions": [
+            {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1},
+        ],
+    },
+
+
+    "Research Citation": {
+        "istable": 1,
+        "fields": [
+            f("ref", "Ref", "Data", in_list_view=1, columns=1,
+              description="The marker the model writes in the answer, e.g. D1."),
+            f("file_name", "Document", "Data", in_list_view=1, columns=3),
+            f("page_number", "Page", "Int", in_list_view=1, columns=1),
+            f("section_heading", "Section", "Data", in_list_view=1, columns=2),
+            f("source_file", "File", "Link", options="File"),
+            f("file_url", "URL", "Data", read_only=1),
+            f("source_doctype", "Attached To DocType", "Link", options="DocType"),
+            f("source_docname", "Attached To", "Dynamic Link", options="source_doctype"),
+            f("snippet", "Snippet", "Small Text",
+              description="The exact passage retrieved. Kept so a citation can be verified "
+                          "without re-running the search."),
+            f("used", "Cited", "Check", in_list_view=1, columns=1,
+              description="Whether the answer actually referenced this passage."),
         ],
     },
 

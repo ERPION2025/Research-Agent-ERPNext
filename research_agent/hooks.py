@@ -39,6 +39,7 @@ scheduler_events = {
         "research_agent.agent.mcp.client.refresh_all_servers",
     ],
     "daily": [
+        "research_agent.agent.rag.ingest.retry_failed",
         "research_agent.research_agent.doctype.research_session.research_session.purge_old_sessions",
         "research_agent.research_agent.doctype.agent_action_request.agent_action_request.expire_stale_requests",
     ],
@@ -53,6 +54,10 @@ override_doctype_dashboards = {
 }
 
 doc_events = {
+    "File": {
+        "after_insert": "research_agent.agent.rag.ingest.on_file_insert",
+        "on_trash": "research_agent.agent.rag.ingest.on_file_delete",
+    },
     "Market Research Report": {
         "on_submit": "research_agent.dashboards.clear_research_cache",
     }

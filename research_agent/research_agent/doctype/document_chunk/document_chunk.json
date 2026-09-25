@@ -1,0 +1,154 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Document Chunk",
+ "field_order": [
+  "source_file",
+  "file_name",
+  "chunk_index",
+  "cb_chunk_head",
+  "source_doctype",
+  "source_docname",
+  "page_number",
+  "section_heading",
+  "sb_chunk_text",
+  "chunk_text",
+  "token_estimate",
+  "sb_chunk_vec",
+  "embedding",
+  "embedding_model",
+  "content_hash",
+  "indexed_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "source_file",
+   "label": "File",
+   "fieldtype": "Link",
+   "options": "File",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "The permission anchor. Everything about who may read this chunk is decided by this File and the document it is attached to."
+  },
+  {
+   "fieldname": "file_name",
+   "label": "File Name",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "chunk_index",
+   "label": "Chunk",
+   "fieldtype": "Int",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "cb_chunk_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_doctype",
+   "label": "Attached To DocType",
+   "fieldtype": "Link",
+   "options": "DocType",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "source_docname",
+   "label": "Attached To",
+   "fieldtype": "Dynamic Link",
+   "options": "source_doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "page_number",
+   "label": "Page",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_heading",
+   "label": "Section",
+   "fieldtype": "Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_chunk_text",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "chunk_text",
+   "label": "Chunk Text",
+   "fieldtype": "Long Text",
+   "read_only": 1,
+   "description": "Includes a generated context line prepended at index time, which is what makes a clause retrievable without the surrounding document."
+  },
+  {
+   "fieldname": "token_estimate",
+   "label": "Tokens",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_chunk_vec",
+   "fieldtype": "Section Break",
+   "label": "Vector"
+  },
+  {
+   "fieldname": "embedding",
+   "label": "Embedding",
+   "fieldtype": "Long Text",
+   "read_only": 1,
+   "hidden": 1,
+   "description": "int8 quantised, 256 dimensions, base64."
+  },
+  {
+   "fieldname": "embedding_model",
+   "label": "Embedded With",
+   "fieldtype": "Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "content_hash",
+   "label": "Content Hash",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "hidden": 1,
+   "search_index": 1,
+   "description": "Hash of model, dimensions and exact text. Lets a reindex skip chunks whose text has not changed instead of paying to embed them again."
+  },
+  {
+   "fieldname": "indexed_on",
+   "label": "Indexed On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1
+  }
+ ],
+ "autoname": "hash",
+ "title_field": "file_name"
+}
