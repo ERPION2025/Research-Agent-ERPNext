@@ -30,6 +30,9 @@
   "steps",
   "reflections",
   "eval_detail",
+  "sb_citations",
+  "citations",
+  "uncited_markers",
   "sb_outputs",
   "research_report",
   "actions_raised",
@@ -139,6 +142,25 @@
    "fieldtype": "Code",
    "options": "JSON",
    "read_only": 1
+  },
+  {
+   "fieldname": "sb_citations",
+   "fieldtype": "Section Break",
+   "label": "Sources"
+  },
+  {
+   "fieldname": "citations",
+   "label": "Citations",
+   "fieldtype": "Table",
+   "options": "Research Citation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "uncited_markers",
+   "label": "Unresolved Markers",
+   "fieldtype": "Small Text",
+   "read_only": 1,
+   "description": "Markers the answer used that match no retrieved passage. Any value here is a fabricated citation and the answer should not be trusted."
   },
   {
    "fieldname": "sb_outputs",

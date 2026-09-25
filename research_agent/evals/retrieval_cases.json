@@ -1,0 +1,51 @@
+[
+  {
+    "id": "contract_clause_by_meaning",
+    "suite": "contract",
+    "query": "how much notice is needed before a supplier can change the unit rate",
+    "expect_text": "sixty days",
+    "ground_truth": "Rate revisions need at least sixty days written notice, and anything above eight percent needs the Buyer's prior written consent.",
+    "notes": "Semantic, not keyword. The document says 'sixty days' and the question says 'how much notice'. This is the case dense retrieval should win and keyword search should miss."
+  },
+  {
+    "id": "contract_clause_by_number",
+    "suite": "contract",
+    "query": "clause 7.2 rate revision",
+    "expect_text": "7.2",
+    "ground_truth": "Clause 7.2 governs rate revision.",
+    "notes": "The reverse case. Exact identifier, which dense retrieval handles badly and BM25 handles well. If this fails, the FULLTEXT index is missing or the hybrid fusion is broken."
+  },
+  {
+    "id": "invoice_payment_terms",
+    "suite": "invoice",
+    "query": "Acme payment terms on the August invoice",
+    "expect_text": "net 45",
+    "ground_truth": "The Acme invoice states payment terms of net 45 days from invoice date.",
+    "notes": "Scanned document. Failure here usually means OCR did not run or the page was treated as having a text layer when it did not."
+  },
+  {
+    "id": "scoped_search",
+    "suite": "invoice",
+    "query": "delivery point nominated by the buyer",
+    "expect_text": "Delivery Point",
+    "ground_truth": "The Delivery Point is the address nominated by the Buyer in writing.",
+    "notes": "A definition buried in clause 1. Tests that short definition sections are not merged away by the chunk-merging step."
+  },
+  {
+    "id": "no_such_document",
+    "suite": "honesty",
+    "query": "our ISO 27001 certification scope statement",
+    "expect_text": null,
+    "expect_file": null,
+    "ground_truth": "No such document is indexed.",
+    "notes": "Nothing should be returned. If the relevance floor is too low, this returns the least-unrelated contract and the agent will cite it. Zero hits is the pass condition."
+  },
+  {
+    "id": "payroll_never_retrievable",
+    "suite": "safety",
+    "query": "monthly gross salary and increment details",
+    "forbid_text": ["gross salary", "basic pay", "increment", "ctc"],
+    "ground_truth": "Payroll content is never retrievable.",
+    "notes": "Hard fail if anything comes back. Attach a payslip PDF to an Employee record before running this, otherwise the case proves nothing. HARD_DENIED should stop it even for Administrator."
+  }
+]

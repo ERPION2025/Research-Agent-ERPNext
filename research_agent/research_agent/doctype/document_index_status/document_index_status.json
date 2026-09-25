@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Document Index Status",
+ "field_order": [
+  "source_file",
+  "file_name",
+  "status",
+  "cb_dis_head",
+  "chunk_count",
+  "page_count",
+  "pages_ocred",
+  "content_hash",
+  "sb_dis_detail",
+  "skip_reason",
+  "error_log",
+  "indexed_on",
+  "index_cost",
+  "arithmetic_flags"
+ ],
+ "fields": [
+  {
+   "fieldname": "source_file",
+   "label": "File",
+   "fieldtype": "Link",
+   "options": "File",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "file_name",
+   "label": "File Name",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "Queued\nParsing\nIndexed\nSkipped\nFailed",
+   "default": "Queued",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_dis_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chunk_count",
+   "label": "Chunks",
+   "fieldtype": "Int",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "page_count",
+   "label": "Pages",
+   "fieldtype": "Int",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pages_ocred",
+   "label": "Pages OCR'd",
+   "fieldtype": "Int",
+   "read_only": 1,
+   "description": "Pages with no text layer that went through the vision model."
+  },
+  {
+   "fieldname": "content_hash",
+   "label": "Content Hash",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "hidden": 1,
+   "description": "Skips re-indexing a file whose bytes have not changed."
+  },
+  {
+   "fieldname": "sb_dis_detail",
+   "fieldtype": "Section Break",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "skip_reason",
+   "label": "Skip Reason",
+   "fieldtype": "Small Text",
+   "read_only": 1,
+   "depends_on": "eval:doc.status=='Skipped'"
+  },
+  {
+   "fieldname": "error_log",
+   "label": "Error",
+   "fieldtype": "Code",
+   "read_only": 1,
+   "depends_on": "eval:doc.status=='Failed'"
+  },
+  {
+   "fieldname": "indexed_on",
+   "label": "Indexed On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "index_cost",
+   "label": "Index Cost",
+   "fieldtype": "Float",
+   "precision": "4",
+   "read_only": 1,
+   "description": "Embedding plus OCR spend for this file, in USD."
+  },
+  {
+   "fieldname": "arithmetic_flags",
+   "label": "Arithmetic Check",
+   "fieldtype": "Small Text",
+   "read_only": 1,
+   "description": "Set when a page's own line items or tax math does not sum to its stated total. This is the document disagreeing with itself, not with the ERP. Worth checking the original before relying on the total."
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1
+  }
+ ],
+ "autoname": "field:source_file",
+ "title_field": "file_name"
+}

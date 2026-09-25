@@ -98,6 +98,14 @@ def get_session(name: str) -> dict:
             for s in doc.steps
         ],
         "artifacts": [json.loads(a.spec) for a in doc.artifacts if a.spec],
+        "citations": [
+            {"ref": c.ref, "file": c.file_name, "page": c.page_number,
+             "section": c.section_heading, "url": c.file_url, "snippet": c.snippet,
+             "attached_to": f"{c.source_doctype} {c.source_docname}".strip()
+             if c.source_doctype else None, "used": bool(c.used)}
+            for c in doc.citations
+        ],
+        "uncited_markers": doc.uncited_markers,
     }
 
 

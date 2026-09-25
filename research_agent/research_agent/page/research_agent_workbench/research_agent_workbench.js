@@ -75,6 +75,7 @@ class ResearchAgentUI {
 							${__("Nothing yet. Ask a question above and the answer, charts and full working will appear here.")}
 						</div>
 						<div class="ra-answer hidden"></div>
+						<div class="ra-sources hidden"></div>
 						<div class="ra-artifacts"></div>
 					</div>
 					<div class="ra-trace-col">
@@ -92,6 +93,7 @@ class ResearchAgentUI {
 		this.$prompt = this.page.main.find(".ra-prompt");
 		this.$trace = this.page.main.find(".ra-trace");
 		this.$answer = this.page.main.find(".ra-answer");
+		this.$sources = this.page.main.find(".ra-sources");
 		this.$artifacts = this.page.main.find(".ra-artifacts");
 		this.$status = this.page.main.find(".ra-status-text");
 		this.$dot = this.page.main.find(".ra-status-dot");
@@ -132,6 +134,8 @@ class ResearchAgentUI {
 
 	reset() {
 		this.artifacts = {};
+		this.citations = {};
+		this.$sources.addClass("hidden").empty();
 		Object.values(this.charts).forEach((c) => c && c.destroy && c.destroy());
 		this.charts = {};
 		this.$trace.empty();
@@ -168,7 +172,7 @@ class ResearchAgentUI {
 		frappe.realtime.on("research_agent_complete", (d) => {
 			if (!mine(d)) return;
 			this.set_status("Completed");
-			this.show_answer(d.answer, d.score);
+			this.show_answer(d.answer, d.score, d.citations);
 		});
 	}
 
@@ -349,14 +353,57 @@ class ResearchAgentUI {
 	}
 
 	// -------------------------------------------------------------- answer
-	show_answer(md, score) {
-		this.$answer.removeClass("hidden").html(sanitize_html(frappe.markdown(md || "")));
+	show_answer(md, score, citations) {
+		const html = sanitize_html(frappe.markdown(md || ""));
+		this.$answer.removeClass("hidden").html(this.linkify_citations(html, citations || []));
+		this.render_sources(citations || []);
 		if (score != null) {
 			const colour = score >= 0.85 ? "green" : score >= 0.7 ? "orange" : "red";
 			this.$score.html(
 				`<span class="indicator-pill ${colour}">${__("score")} ${score.toFixed(2)}</span>`
 			);
 		}
+	}
+
+	// [D1] markers are written by the model as plain text; code, not the
+	// model, decides what they link to. A marker with no matching citation
+	// is shown struck through rather than silently dropped, since that is a
+	// fabricated citation and hiding it would defeat the audit trail.
+	linkify_citations(html, citations) {
+		const by_ref = {};
+		citations.forEach((c) => (by_ref[c.ref] = c));
+		return html.replace(/\[(D\d{1,2})\]/g, (match, ref) => {
+			const c = by_ref[ref];
+			if (!c) {
+				return `<span class="ra-cite broken" title="${__(
+					"This marker matches no retrieved passage."
+				)}">${frappe.utils.escape_html(ref)}</span>`;
+			}
+			const title = [c.file, c.page ? __("p. {0}", [c.page]) : null].filter(Boolean).join(" · ");
+			return `<a class="ra-cite" href="${frappe.utils.escape_html(c.url || "#")}" target="_blank" rel="noopener" title="${frappe.utils.escape_html(title)}">${frappe.utils.escape_html(ref)}</a>`;
+		});
+	}
+
+	render_sources(citations) {
+		if (!citations.length) {
+			this.$sources.addClass("hidden").empty();
+			return;
+		}
+		const rows = citations
+			.map((c) => {
+				const loc = [c.section, c.page ? __("p. {0}", [c.page]) : null].filter(Boolean).join(" · ");
+				return `
+					<div class="ra-source">
+						<div class="ra-source-ref">${frappe.utils.escape_html(c.ref)}</div>
+						<div class="ra-source-body">
+							<a href="${frappe.utils.escape_html(c.url || "#")}" target="_blank" rel="noopener">${frappe.utils.escape_html(c.file || "")}</a>
+							${loc ? `<span class="ra-source-loc">${frappe.utils.escape_html(loc)}</span>` : ""}
+							${c.snippet ? `<div class="ra-source-snip">${frappe.utils.escape_html(c.snippet)}</div>` : ""}
+						</div>
+					</div>`;
+			})
+			.join("");
+		this.$sources.removeClass("hidden").html(`<div class="ra-sources-head">${__("Sources")}</div>${rows}`);
 	}
 
 	// -------------------------------------------------------------- history
@@ -391,7 +438,7 @@ class ResearchAgentUI {
 			this.set_status(s.status);
 			(s.steps || []).forEach((st) => this.add_step(st));
 			(s.artifacts || []).forEach((a) => this.add_artifact(a));
-			if (s.final_answer) this.show_answer(s.final_answer, s.eval_score);
+			if (s.final_answer) this.show_answer(s.final_answer, s.eval_score, s.citations);
 		});
 	}
 }

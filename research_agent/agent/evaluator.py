@@ -144,6 +144,46 @@ def _sources(transcript: list[dict]) -> Check:
     )
 
 
+def _citation_integrity(draft: str, citations: list) -> Check:
+    """Did document claims get cited, and does every marker resolve.
+
+    Two failures, weighted differently. A fabricated marker scores zero
+    outright: it manufactures the appearance of evidence, which is worse than
+    an uncited claim because it defeats the audit the whole product rests on.
+    Retrieving passages and then citing none is a softer failure, but it still
+    means the reader cannot check the answer.
+    """
+    if not citations:
+        return Check("citation_integrity", 1.0, 0.15, "No document passages were used.")
+
+    import re
+
+    cited = set(re.findall(r"\[(D\d{1,2})\]", draft or ""))
+    known = {c["ref"] if isinstance(c, dict) else c.ref for c in citations}
+    unresolved = cited - known
+
+    if unresolved:
+        return Check(
+            "citation_integrity", 0.0, 0.15,
+            f"The answer cites {sorted(unresolved)}, which match no retrieved passage. "
+            "That is a fabricated citation. Cite only the markers you were given.",
+        )
+    if not cited:
+        return Check(
+            "citation_integrity", 0.0, 0.15,
+            f"{len(known)} document passages were retrieved and none were cited. Every claim "
+            "taken from a document needs its [D#] marker so the reader can open the source.",
+        )
+
+    coverage = len(cited) / len(known)
+    return Check(
+        "citation_integrity", 1.0, 0.15,
+        f"{len(cited)} of {len(known)} retrieved passages cited, all resolving."
+        + ("" if coverage > 0.3 else " Most retrieved passages went unused, which suggests the "
+                                     "search was broader than the question needed."),
+    )
+
+
 JUDGE_PROMPT = """You are reviewing a draft answer written by a business analytics agent for a senior manager.
 
 Question asked:
@@ -200,12 +240,14 @@ def evaluate(
     artifacts: list,
     threshold: float = 0.75,
     use_judge: bool = True,
+    citations: list | None = None,
 ) -> Verdict:
     checks = [
         _grounding(draft, transcript),
         _erp_used(question, transcript),
         _artifacts(question, artifacts),
         _sources(transcript),
+        _citation_integrity(draft, citations or []),
     ]
 
     cheap_score = sum(c.score * c.weight for c in checks) / sum(c.weight for c in checks)

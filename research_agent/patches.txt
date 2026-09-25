@@ -2,3 +2,4 @@
 
 [post_model_sync]
 research_agent.patches.v0_1.remove_duplicate_research_agent_page
+research_agent.patches.v0_3_2_add_fulltext_index

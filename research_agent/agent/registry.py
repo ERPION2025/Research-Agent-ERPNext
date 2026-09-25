@@ -60,6 +60,7 @@ def _load_builtins():
         analysis,
         erpnext_data,
         erpnext_ops,
+        knowledge,
         research_report,
         tavily_search,
         visualize,
@@ -104,6 +105,8 @@ def available_tools(include_web: bool = True, include_mcp: bool = True) -> dict[
         if t.category == "Web Research" and not include_web:
             continue
         if t.category == "Write Actions" and not settings.allow_write_actions:
+            continue
+        if t.category == "Documents" and not settings.get("enable_knowledge_base"):
             continue
         if _user_allowed(registry.get(name)):
             out[name] = t

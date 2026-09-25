@@ -1,0 +1,100 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Research Agent",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Research Citation",
+ "field_order": [
+  "ref",
+  "file_name",
+  "page_number",
+  "section_heading",
+  "source_file",
+  "file_url",
+  "source_doctype",
+  "source_docname",
+  "snippet",
+  "used"
+ ],
+ "fields": [
+  {
+   "fieldname": "ref",
+   "label": "Ref",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 1,
+   "description": "The marker the model writes in the answer, e.g. D1."
+  },
+  {
+   "fieldname": "file_name",
+   "label": "Document",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 3
+  },
+  {
+   "fieldname": "page_number",
+   "label": "Page",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "section_heading",
+   "label": "Section",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "source_file",
+   "label": "File",
+   "fieldtype": "Link",
+   "options": "File"
+  },
+  {
+   "fieldname": "file_url",
+   "label": "URL",
+   "fieldtype": "Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_doctype",
+   "label": "Attached To DocType",
+   "fieldtype": "Link",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "source_docname",
+   "label": "Attached To",
+   "fieldtype": "Dynamic Link",
+   "options": "source_doctype"
+  },
+  {
+   "fieldname": "snippet",
+   "label": "Snippet",
+   "fieldtype": "Small Text",
+   "description": "The exact passage retrieved. Kept so a citation can be verified without re-running the search."
+  },
+  {
+   "fieldname": "used",
+   "label": "Cited",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "columns": 1,
+   "description": "Whether the answer actually referenced this passage."
+  }
+ ],
+ "permissions": [],
+ "istable": 1,
+ "editable_grid": 1
+}
